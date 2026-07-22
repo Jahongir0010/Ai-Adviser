@@ -31,12 +31,12 @@ export const SEASONAL_TRENDS = [
 ]
 
 export const POPULATION_DISTRIBUTION = [
-  { name: 'Tashkent City', value: 2.98 },
-  { name: 'Samarqand', value: 4.02 },
-  { name: "Farg'ona", value: 3.85 },
-  { name: 'Andijon', value: 3.21 },
-  { name: 'Qashqadaryo', value: 3.42 },
-  { name: 'Other regions', value: 18.4 },
+  { regionId: 'toshkent_c', value: 2.98 },
+  { regionId: 'samarqand', value: 4.02 },
+  { regionId: 'fargona', value: 3.85 },
+  { regionId: 'andijon', value: 3.21 },
+  { regionId: 'qashqadaryo', value: 3.42 },
+  { regionId: null, value: 18.4 },
 ]
 
 export const CONSUMER_BEHAVIOR = [

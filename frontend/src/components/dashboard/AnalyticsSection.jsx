@@ -5,14 +5,16 @@ import SeasonalTrendsChart from './charts/SeasonalTrendsChart.jsx'
 import PopulationDistributionChart from './charts/PopulationDistributionChart.jsx'
 import ConsumerBehaviorChart from './charts/ConsumerBehaviorChart.jsx'
 import InvestmentForecastChart from './charts/InvestmentForecastChart.jsx'
+import { useLocale } from '../../i18n/LocaleContext.jsx'
 
 export default function AnalyticsSection() {
+  const { t } = useLocale()
   return (
     <section>
       <SectionHeading
-        eyebrow="Analytics"
-        title="National Market Intelligence"
-        description="Live indicators aggregated across all 14 regions, refreshed daily by the AI analytics engine."
+        eyebrow={t('analytics.eyebrow')}
+        title={t('analytics.title')}
+        description={t('analytics.description')}
       />
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         <MarketDemandChart />

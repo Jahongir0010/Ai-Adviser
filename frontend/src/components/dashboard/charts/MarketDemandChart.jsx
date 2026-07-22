@@ -3,16 +3,19 @@ import ChartCard, { LegendDot } from './ChartCard.jsx'
 import ChartTooltip from './ChartTooltip.jsx'
 import { MARKET_DEMAND } from '../../../data/charts.js'
 import { CHART_COLORS, CHART_GRID, CHART_AXIS } from '../../../utils/chartColors.js'
+import { useLocale } from '../../../i18n/LocaleContext.jsx'
+import { MONTHS, trMap } from '../../../i18n/dictionaries.js'
 
 export default function MarketDemandChart() {
+  const { locale, t } = useLocale()
   return (
     <ChartCard
-      title="Market Demand"
-      subtitle="Demand vs. supply index, trailing 12 months"
+      title={t('chart.marketDemand.title')}
+      subtitle={t('chart.marketDemand.subtitle')}
       legend={
         <>
-          <LegendDot color={CHART_COLORS.primary} label="Demand index" />
-          <LegendDot color={CHART_COLORS.secondary} label="Supply index" />
+          <LegendDot color={CHART_COLORS.primary} label={t('chart.marketDemand.demand')} />
+          <LegendDot color={CHART_COLORS.secondary} label={t('chart.marketDemand.supply')} />
         </>
       }
     >
@@ -25,13 +28,19 @@ export default function MarketDemandChart() {
             </linearGradient>
           </defs>
           <CartesianGrid vertical={false} stroke={CHART_GRID} strokeDasharray="3 3" />
-          <XAxis dataKey="month" tick={{ fontSize: 11, fill: CHART_AXIS }} axisLine={{ stroke: CHART_GRID }} tickLine={false} />
+          <XAxis
+            dataKey="month"
+            tickFormatter={(m) => trMap(MONTHS, m, locale)}
+            tick={{ fontSize: 11, fill: CHART_AXIS }}
+            axisLine={{ stroke: CHART_GRID }}
+            tickLine={false}
+          />
           <YAxis tick={{ fontSize: 11, fill: CHART_AXIS }} axisLine={false} tickLine={false} width={28} />
-          <Tooltip content={<ChartTooltip />} />
+          <Tooltip content={<ChartTooltip />} labelFormatter={(m) => trMap(MONTHS, m, locale)} />
           <Area
             type="monotone"
             dataKey="demand"
-            name="Demand"
+            name={t('chart.marketDemand.demand')}
             stroke={CHART_COLORS.primary}
             strokeWidth={2}
             fill="url(#fillDemand)"
@@ -41,7 +50,7 @@ export default function MarketDemandChart() {
           <Area
             type="monotone"
             dataKey="supply"
-            name="Supply"
+            name={t('chart.marketDemand.supply')}
             stroke={CHART_COLORS.secondary}
             strokeWidth={2}
             fill="transparent"

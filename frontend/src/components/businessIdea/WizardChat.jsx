@@ -4,6 +4,7 @@ import GlassCard from '../ui/GlassCard.jsx'
 import Button from '../ui/Button.jsx'
 import WizardProgress from './WizardProgress.jsx'
 import { WIZARD_QUESTIONS } from '../../data/wizard.js'
+import { useLocale, tr } from '../../i18n/LocaleContext.jsx'
 
 function ChatBubble({ from, text, subtext }) {
   if (!text) return null
@@ -30,6 +31,7 @@ function ChatBubble({ from, text, subtext }) {
 }
 
 export default function WizardChat({ onComplete }) {
+  const { locale, t } = useLocale()
   const [stepIndex, setStepIndex] = useState(0)
   const [answers, setAnswers] = useState({})
   const [multiSelection, setMultiSelection] = useState([])
@@ -52,6 +54,12 @@ export default function WizardChat({ onComplete }) {
     setMultiSelection((prev) => (prev.includes(opt) ? prev.filter((o) => o !== opt) : [...prev, opt]))
   }
 
+  function answerText(q) {
+    const value = answers[q.id]
+    if (value == null) return null
+    return Array.isArray(value) ? value.map((o) => tr(o, locale)).join(', ') : tr(value, locale)
+  }
+
   return (
     <GlassCard className="p-5 md:p-7 max-w-2xl mx-auto w-full">
       <div className="flex items-center gap-2.5 mb-5">
@@ -59,8 +67,10 @@ export default function WizardChat({ onComplete }) {
           <Sparkles className="size-[18px] text-white" strokeWidth={2.25} />
         </div>
         <div>
-          <p className="font-semibold text-[14px] text-ink-900">AI Business Advisor</p>
-          <p className="text-[12px] text-ink-400">Guided discovery · step {stepIndex + 1} of {WIZARD_QUESTIONS.length}</p>
+          <p className="font-semibold text-[14px] text-ink-900">{t('wizard.advisorName')}</p>
+          <p className="text-[12px] text-ink-400">
+            {t('wizard.stepOf').replace('{current}', stepIndex + 1).replace('{total}', WIZARD_QUESTIONS.length)}
+          </p>
         </div>
       </div>
 
@@ -69,20 +79,20 @@ export default function WizardChat({ onComplete }) {
       <div className="mt-6 space-y-4 max-h-[380px] overflow-y-auto pr-1">
         {history.map((q) => (
           <div key={q.id} className="space-y-2">
-            <ChatBubble from="ai" text={q.question} />
-            <ChatBubble from="user" text={Array.isArray(answers[q.id]) ? answers[q.id].join(', ') : answers[q.id]} />
+            <ChatBubble from="ai" text={tr(q.question, locale)} />
+            <ChatBubble from="user" text={answerText(q)} />
           </div>
         ))}
 
         <div key={question.id} className="animate-fade-up">
-          <ChatBubble from="ai" text={question.question} subtext={question.subtext} />
+          <ChatBubble from="ai" text={tr(question.question, locale)} subtext={tr(question.subtext, locale)} />
           <div className="mt-3 ml-11 flex flex-wrap gap-2">
             {question.options.map((opt) => {
               const isMulti = question.type === 'multi'
               const isSelected = isMulti && multiSelection.includes(opt)
               return (
                 <button
-                  key={opt}
+                  key={opt.en}
                   onClick={() => (isMulti ? toggleMulti(opt) : advance(opt))}
                   className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13.5px] font-medium transition-all ${
                     isSelected
@@ -91,7 +101,7 @@ export default function WizardChat({ onComplete }) {
                   }`}
                 >
                   {isSelected && <Check className="size-3.5" strokeWidth={2.5} />}
-                  {opt}
+                  {tr(opt, locale)}
                 </button>
               )
             })}
@@ -99,7 +109,7 @@ export default function WizardChat({ onComplete }) {
           {question.type === 'multi' && (
             <div className="ml-11 mt-3">
               <Button size="sm" disabled={multiSelection.length === 0} onClick={() => advance(multiSelection)}>
-                Continue <ArrowRight className="size-4" strokeWidth={2.25} />
+                {t('wizard.continue')} <ArrowRight className="size-4" strokeWidth={2.25} />
               </Button>
             </div>
           )}

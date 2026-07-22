@@ -4,25 +4,27 @@ import {
   Sparkles,
   LineChart,
   Briefcase,
-  Settings,
+  Settings as SettingsIcon,
   LifeBuoy,
   ChevronsLeft,
   ChevronsRight,
 } from 'lucide-react'
 import { useState } from 'react'
+import { useLocale } from '../i18n/LocaleContext.jsx'
 
 const NAV_ITEMS = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
-  { to: '/business-idea', label: 'Business Idea', icon: Sparkles },
+  { to: '/dashboard', labelKey: 'sidebar.dashboard', icon: LayoutGrid },
+  { to: '/business-idea', labelKey: 'sidebar.businessIdea', icon: Sparkles },
 ]
 
 const SOON_ITEMS = [
-  { label: 'Market Reports', icon: LineChart },
-  { label: 'Portfolio', icon: Briefcase },
+  { labelKey: 'sidebar.marketReports', icon: LineChart },
+  { labelKey: 'sidebar.portfolio', icon: Briefcase },
 ]
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
+  const { t } = useLocale()
 
   return (
     <aside
@@ -43,9 +45,9 @@ export default function Sidebar() {
 
       <nav className="flex-1 px-3 py-2 flex flex-col gap-1 overflow-y-auto">
         <p className={`px-3 mt-2 mb-1.5 text-[11px] font-semibold tracking-wider text-ink-400 uppercase ${collapsed ? 'text-center px-0' : ''}`}>
-          {collapsed ? '—' : 'Platform'}
+          {collapsed ? '—' : t('sidebar.platform')}
         </p>
-        {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+        {NAV_ITEMS.map(({ to, labelKey, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}
@@ -60,7 +62,7 @@ export default function Sidebar() {
             {({ isActive }) => (
               <>
                 <Icon className={`size-[18px] shrink-0 ${isActive ? 'text-white' : 'text-ink-400 group-hover:text-primary-600'}`} strokeWidth={2} />
-                {!collapsed && <span className="whitespace-nowrap">{label}</span>}
+                {!collapsed && <span className="whitespace-nowrap">{t(labelKey)}</span>}
                 {isActive && !collapsed && (
                   <span className="ml-auto size-1.5 rounded-full bg-secondary-400 animate-pulse-ring" />
                 )}
@@ -70,35 +72,42 @@ export default function Sidebar() {
         ))}
 
         <p className={`px-3 mt-5 mb-1.5 text-[11px] font-semibold tracking-wider text-ink-400 uppercase ${collapsed ? 'text-center px-0' : ''}`}>
-          {collapsed ? '—' : 'Coming soon'}
+          {collapsed ? '—' : t('sidebar.comingSoon')}
         </p>
-        {SOON_ITEMS.map(({ label, icon: Icon }) => (
+        {SOON_ITEMS.map(({ labelKey, icon: Icon }) => (
           <div
-            key={label}
+            key={labelKey}
             className="flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-[14px] font-medium text-ink-300 cursor-not-allowed select-none"
-            title="Coming soon"
+            title={t('sidebar.comingSoon')}
           >
             <Icon className="size-[18px] shrink-0" strokeWidth={2} />
-            {!collapsed && <span className="whitespace-nowrap">{label}</span>}
+            {!collapsed && <span className="whitespace-nowrap">{t(labelKey)}</span>}
           </div>
         ))}
       </nav>
 
       <div className="px-3 py-3 border-t border-ink-100 flex flex-col gap-1">
-        <div className="flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-[14px] font-medium text-ink-400">
-          <Settings className="size-[18px] shrink-0" strokeWidth={2} />
-          {!collapsed && <span>Settings</span>}
-        </div>
+        <NavLink
+          to="/settings"
+          className={({ isActive }) =>
+            `flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-[14px] font-medium transition-colors ${
+              isActive ? 'bg-primary-50 text-primary-700' : 'text-ink-400 hover:bg-ink-50 hover:text-ink-700'
+            }`
+          }
+        >
+          <SettingsIcon className="size-[18px] shrink-0" strokeWidth={2} />
+          {!collapsed && <span>{t('sidebar.settings')}</span>}
+        </NavLink>
         <div className="flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-[14px] font-medium text-ink-400">
           <LifeBuoy className="size-[18px] shrink-0" strokeWidth={2} />
-          {!collapsed && <span>Help & Support</span>}
+          {!collapsed && <span>{t('sidebar.help')}</span>}
         </div>
         <button
           onClick={() => setCollapsed((c) => !c)}
           className="flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-[14px] font-medium text-ink-400 hover:bg-ink-50 hover:text-ink-700 transition-colors mt-1"
         >
           {collapsed ? <ChevronsRight className="size-[18px]" strokeWidth={2} /> : <ChevronsLeft className="size-[18px]" strokeWidth={2} />}
-          {!collapsed && <span>Collapse</span>}
+          {!collapsed && <span>{t('sidebar.collapse')}</span>}
         </button>
       </div>
     </aside>

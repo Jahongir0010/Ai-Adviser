@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { computeRegionCells, MAP_VIEWBOX, UZ_OUTLINE_PATH } from '../../utils/geo.js'
 import { REGIONS } from '../../data/regions.js'
+import { useLocale } from '../../i18n/LocaleContext.jsx'
+import { trRegionName } from '../../i18n/dictionaries.js'
 
 const SCORES = Object.values(REGIONS).map((r) => r.aiOpportunityScore)
 const SCORE_MIN = Math.min(...SCORES)
@@ -22,6 +24,7 @@ function scoreToColor(score) {
 export default function UzbekistanMap({ selectedId, onSelect }) {
   const cells = useMemo(() => computeRegionCells(), [])
   const [hoveredId, setHoveredId] = useState(null)
+  const { locale, t } = useLocale()
 
   return (
     <div className="relative">
@@ -89,22 +92,22 @@ export default function UzbekistanMap({ selectedId, onSelect }) {
             y={cell.y}
             textAnchor="middle"
             pointerEvents="none"
-            fontSize={cell.id === 'toshkent_c' || cell.id === 'sirdaryo' ? 9 : 11}
+            fontSize={cell.id === 'toshkent_c' || cell.id === 'sirdaryo' ? 8.5 : 10}
             fontWeight={selectedId === cell.id ? 700 : 600}
             fill="#0b3255"
             paintOrder="stroke"
             stroke="rgba(255,255,255,0.85)"
             strokeWidth={3}
           >
-            {cell.name}
+            {trRegionName(cell.id, locale)}
           </text>
         ))}
       </svg>
 
       <div className="absolute bottom-2 left-2 flex items-center gap-2 rounded-full bg-white/85 backdrop-blur px-3 py-1.5 border border-ink-100 shadow-soft">
-        <span className="text-[11px] font-medium text-ink-500">AI Opportunity Score</span>
+        <span className="text-[11px] font-medium text-ink-500">{t('map.opportunityScore')}</span>
         <span className="h-2 w-20 rounded-full bg-gradient-to-r from-primary-600 to-secondary-500" />
-        <span className="text-[11px] text-ink-400">Low → High</span>
+        <span className="text-[11px] text-ink-400">{t('map.lowToHigh')}</span>
       </div>
     </div>
   )

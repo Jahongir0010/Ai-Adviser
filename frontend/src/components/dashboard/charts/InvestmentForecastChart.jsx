@@ -3,16 +3,18 @@ import ChartCard, { LegendDot } from './ChartCard.jsx'
 import ChartTooltip from './ChartTooltip.jsx'
 import { INVESTMENT_FORECAST } from '../../../data/charts.js'
 import { CHART_COLORS, CHART_GRID, CHART_AXIS } from '../../../utils/chartColors.js'
+import { useLocale } from '../../../i18n/LocaleContext.jsx'
 
 export default function InvestmentForecastChart() {
+  const { t } = useLocale()
   return (
     <ChartCard
-      title="Investment Forecast"
-      subtitle="FDI vs. domestic investment, $ billion"
+      title={t('chart.investmentForecast.title')}
+      subtitle={t('chart.investmentForecast.subtitle')}
       legend={
         <>
-          <LegendDot color={CHART_COLORS.primary} label="Foreign direct investment" />
-          <LegendDot color={CHART_COLORS.secondary} label="Domestic investment" />
+          <LegendDot color={CHART_COLORS.primary} label={t('chart.investmentForecast.fdi')} />
+          <LegendDot color={CHART_COLORS.secondary} label={t('chart.investmentForecast.domestic')} />
         </>
       }
     >
@@ -32,11 +34,11 @@ export default function InvestmentForecastChart() {
           <XAxis dataKey="year" tick={{ fontSize: 11, fill: CHART_AXIS }} axisLine={{ stroke: CHART_GRID }} tickLine={false} />
           <YAxis tick={{ fontSize: 11, fill: CHART_AXIS }} axisLine={false} tickLine={false} width={28} unit="B" />
           <Tooltip content={<ChartTooltip formatter={(v) => `$${v}B`} />} />
-          <Area type="monotone" dataKey="fdi" name="FDI" stroke={CHART_COLORS.primary} strokeWidth={2} fill="url(#fillFdi)" activeDot={{ r: 4 }} />
+          <Area type="monotone" dataKey="fdi" name={t('chart.investmentForecast.fdi')} stroke={CHART_COLORS.primary} strokeWidth={2} fill="url(#fillFdi)" activeDot={{ r: 4 }} />
           <Area
             type="monotone"
             dataKey="domestic"
-            name="Domestic"
+            name={t('chart.investmentForecast.domestic')}
             stroke={CHART_COLORS.secondary}
             strokeWidth={2}
             fill="url(#fillDomestic)"

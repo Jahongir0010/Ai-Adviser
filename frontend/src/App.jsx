@@ -1,19 +1,24 @@
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { LocaleProvider } from './i18n/LocaleContext.jsx'
 import AppLayout from './layout/AppLayout.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import BusinessIdea from './pages/BusinessIdea.jsx'
+import Settings from './pages/Settings.jsx'
 
 function App() {
   return (
-    <HashRouter>
-      <Routes>
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/business-idea" element={<BusinessIdea />} />
-        </Route>
-      </Routes>
-    </HashRouter>
+    <LocaleProvider>
+      <HashRouter>
+        <Routes>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/business-idea" element={<BusinessIdea />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+        </Routes>
+      </HashRouter>
+    </LocaleProvider>
   )
 }
 

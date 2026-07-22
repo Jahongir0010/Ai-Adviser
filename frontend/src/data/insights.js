@@ -2,8 +2,12 @@ export const AI_INSIGHTS = [
   {
     id: 'market-scanner',
     icon: 'Radar',
-    title: 'AI Market Scanner',
-    summary: 'Scanned 214K data points across 14 regions to surface emerging demand pockets in retail & logistics.',
+    title: { en: 'AI Market Scanner', uz: 'SI bozor skaneri', ru: 'ИИ-сканер рынка' },
+    summary: {
+      en: 'Scanned 214K data points across 14 regions to surface emerging demand pockets in retail & logistics.',
+      uz: 'Chakana savdo va logistikada yangi talab hududlarini aniqlash uchun 14 hudud bo‘yicha 214 ming ma’lumot nuqtasi tahlil qilindi.',
+      ru: 'Проанализировано 214 тыс. точек данных по 14 регионам для выявления новых очагов спроса в рознице и логистике.',
+    },
     score: 87,
     trend: 'up',
     trendValue: '+4.2%',
@@ -12,8 +16,12 @@ export const AI_INSIGHTS = [
   {
     id: 'location-intelligence',
     icon: 'MapPinned',
-    title: 'AI Location Intelligence',
-    summary: 'Tashkent viloyati and Jizzax show the strongest footfall-to-rent ratio for new retail sites this quarter.',
+    title: { en: 'AI Location Intelligence', uz: 'SI joylashuv tahlili', ru: 'ИИ-аналитика локаций' },
+    summary: {
+      en: 'Tashkent viloyati and Jizzax show the strongest footfall-to-rent ratio for new retail sites this quarter.',
+      uz: 'Bu chorakda yangi chakana savdo joylari uchun Toshkent viloyati va Jizzax eng yuqori tashrif/ijara nisbatini ko‘rsatmoqda.',
+      ru: 'Ташкентская область и Джизак показывают лучшее соотношение посещаемости к аренде для новых торговых точек в этом квартале.',
+    },
     score: 91,
     trend: 'up',
     trendValue: '+2.8%',
@@ -22,8 +30,12 @@ export const AI_INSIGHTS = [
   {
     id: 'competitor-scanner',
     icon: 'Crosshair',
-    title: 'AI Competitor Scanner',
-    summary: 'Detected 312 new market entrants nationwide; competition density rising fastest in Andijon & Fergana.',
+    title: { en: 'AI Competitor Scanner', uz: 'SI raqobatchi skaneri', ru: 'ИИ-сканер конкурентов' },
+    summary: {
+      en: 'Detected 312 new market entrants nationwide; competition density rising fastest in Andijon & Fergana.',
+      uz: 'Mamlakat bo‘yicha 312 ta yangi bozor ishtirokchisi aniqlandi; raqobat zichligi eng tez Andijon va Farg‘onada oshmoqda.',
+      ru: 'Выявлено 312 новых участников рынка по стране; плотность конкуренции быстрее всего растёт в Андижане и Фергане.',
+    },
     score: 68,
     trend: 'down',
     trendValue: '-1.4%',
@@ -32,8 +44,12 @@ export const AI_INSIGHTS = [
   {
     id: 'risk-predictor',
     icon: 'ShieldAlert',
-    title: 'AI Risk Predictor',
-    summary: 'Currency and supply-chain volatility remain the top risk factors; overall national risk trending stable.',
+    title: { en: 'AI Risk Predictor', uz: 'SI xavf prognozchisi', ru: 'ИИ-предиктор рисков' },
+    summary: {
+      en: 'Currency and supply-chain volatility remain the top risk factors; overall national risk trending stable.',
+      uz: 'Valyuta va ta’minot zanjiri beqarorligi asosiy xavf omillari bo‘lib qolmoqda; umumiy milliy xavf barqaror tendensiyada.',
+      ru: 'Волатильность валюты и цепочек поставок остаются главными факторами риска; общий национальный риск стабилен.',
+    },
     score: 74,
     trend: 'flat',
     trendValue: '+0.3%',
@@ -42,8 +58,12 @@ export const AI_INSIGHTS = [
   {
     id: 'investment-optimizer',
     icon: 'Gem',
-    title: 'AI Investment Optimizer',
-    summary: 'Reallocating capital toward Navoiy & Jizzax industrial zones could lift portfolio ROI by an estimated 6.1%.',
+    title: { en: 'AI Investment Optimizer', uz: 'SI investitsiya optimizatori', ru: 'ИИ-оптимизатор инвестиций' },
+    summary: {
+      en: 'Reallocating capital toward Navoiy & Jizzax industrial zones could lift portfolio ROI by an estimated 6.1%.',
+      uz: 'Kapitalni Navoiy va Jizzax sanoat zonalariga yo‘naltirish portfel ROI ko‘rsatkichini taxminan 6,1% ga oshirishi mumkin.',
+      ru: 'Перераспределение капитала в промзоны Навои и Джизака может повысить ROI портфеля примерно на 6,1%.',
+    },
     score: 83,
     trend: 'up',
     trendValue: '+6.1%',
