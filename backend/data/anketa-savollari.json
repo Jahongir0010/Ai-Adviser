@@ -1,0 +1,40 @@
+[
+  {
+    "key": "hudud",
+    "label": "Qaysi viloyatda joylashgansiz?",
+    "type": "select",
+    "required": true,
+    "optionsSource": "regions"
+  },
+  {
+    "key": "tuman",
+    "label": "Qaysi tumanda joylashgansiz?",
+    "type": "select",
+    "required": true,
+    "optionsSource": "districts",
+    "dependsOn": "hudud"
+  },
+  {
+    "key": "boshlangich_kapital",
+    "label": "Boshlang'ich sarmoyangiz qancha (so'mda)?",
+    "type": "number",
+    "required": true,
+    "min": 0
+  },
+  {
+    "key": "tajriba_sohasi",
+    "label": "Qaysi soha bo'yicha tajribangiz yoki qiziqishingiz bor?",
+    "type": "text",
+    "required": false
+  },
+  {
+    "key": "band_vaqt",
+    "label": "Bu ish uchun qancha vaqt ajrata olasiz?",
+    "type": "select",
+    "required": true,
+    "options": [
+      { "value": "toliq", "label": "To'liq band (asosiy ish sifatida)" },
+      { "value": "qisman", "label": "Qisman band (qo'shimcha daromad sifatida)" }
+    ]
+  }
+]
