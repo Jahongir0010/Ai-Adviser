@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const geoDataService = require('./geoData.service');
+const geoService = require('./geo.service');
 
 const QUESTIONS_PATH = path.join(__dirname, '..', '..', 'data', 'anketa-savollari.json');
 
@@ -13,19 +13,19 @@ function resolveOptions(question, answersSoFar) {
   }
 
   if (question.optionsSource === 'regions') {
-    return geoDataService.getRegions().map((r) => ({ value: r.id, label: r.name }));
+    return geoService.getRegions().map((r) => ({ value: r.id, label: r.name }));
   }
 
   if (question.optionsSource === 'districts') {
     const hududValue = answersSoFar ? answersSoFar[question.dependsOn] : undefined;
     if (hududValue === undefined) return [];
-    return geoDataService.getDistricts({ regionId: hududValue }).map((d) => ({ value: d.id, label: d.name }));
+    return geoService.getDistrictsByRegionId(hududValue).map((d) => ({ value: d.id, label: d.name }));
   }
 
   if (question.optionsSource === 'mahallalar') {
     const tumanValue = answersSoFar ? answersSoFar[question.dependsOn] : undefined;
     if (tumanValue === undefined) return [];
-    return geoDataService.getMahallasByDistrict(tumanValue).map((m) => ({ value: m.id, label: m.name }));
+    return geoService.getMahallasByDistrictId(tumanValue).map((m) => ({ value: m.id, label: m.name }));
   }
 
   return [];
