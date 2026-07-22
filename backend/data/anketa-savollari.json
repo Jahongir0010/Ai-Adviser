@@ -15,26 +15,90 @@
     "dependsOn": "hudud"
   },
   {
-    "key": "boshlangich_kapital",
-    "label": "Boshlang'ich sarmoyangiz qancha (so'mda)?",
-    "type": "number",
+    "key": "mahalla",
+    "label": "Qaysi mahallada joylashgansiz?",
+    "type": "select",
     "required": true,
-    "min": 0
+    "optionsSource": "mahallalar",
+    "dependsOn": "tuman"
   },
   {
-    "key": "tajriba_sohasi",
-    "label": "Qaysi soha bo'yicha tajribangiz yoki qiziqishingiz bor?",
-    "type": "text",
-    "required": false
-  },
-  {
-    "key": "band_vaqt",
-    "label": "Bu ish uchun qancha vaqt ajrata olasiz?",
+    "key": "ixtisoslashuv",
+    "label": "Qaysi sohada faoliyat yuritmoqchisiz?",
     "type": "select",
     "required": true,
     "options": [
-      { "value": "toliq", "label": "To'liq band (asosiy ish sifatida)" },
-      { "value": "qisman", "label": "Qisman band (qo'shimcha daromad sifatida)" }
+      { "value": "bogdochilik", "label": "Боғдочилик" },
+      { "value": "dehqonchilik", "label": "Дехқончилик" },
+      { "value": "kichik_ishlab_chiqarish", "label": "Кичик ишлаб чиқариш" },
+      { "value": "parrandachilik", "label": "Паррандачилик" },
+      { "value": "rezavorlar", "label": "Резаворлар" },
+      { "value": "savdo_xizmat", "label": "Савдо ва хизмат кўрсатиш" },
+      { "value": "chorvachilik", "label": "Чорвачилик" },
+      { "value": "hunarmandchilik", "label": "Ҳунармандчилик" }
+    ]
+  },
+  {
+    "key": "loyiha_maqsadi",
+    "label": "Loyihangizning maqsadi nima?",
+    "type": "text",
+    "required": true
+  },
+  {
+    "key": "faoliyat_joyi",
+    "label": "Faoliyat joyingiz qanday?",
+    "type": "select",
+    "required": true,
+    "options": [
+      { "value": "uy_sharoitida", "label": "Uy sharoitida" },
+      { "value": "ijara", "label": "Ijaraga olingan joy" },
+      { "value": "oz_mulki", "label": "O'z mulki" },
+      { "value": "hali_yoq", "label": "Hali joy yo'q" }
+    ]
+  },
+  {
+    "key": "garov_bor",
+    "label": "Garovingiz bormi?",
+    "type": "select",
+    "required": true,
+    "options": [
+      { "value": "ha", "label": "Ha" },
+      { "value": "yoq", "label": "Yo'q" }
+    ]
+  },
+  {
+    "key": "garov_turi",
+    "label": "Garov turi qanday?",
+    "type": "select",
+    "required": false,
+    "requiredIf": { "key": "garov_bor", "equals": "ha" },
+    "options": [
+      { "value": "kochmas_mulk", "label": "Кўчмас мулк" },
+      { "value": "transport", "label": "Транспорт воситаси" },
+      { "value": "uskuna", "label": "Ускуна/техника" },
+      { "value": "boshqa", "label": "Бошқа" }
+    ]
+  },
+  {
+    "key": "garov_qiymati",
+    "label": "Garovning taxminiy qiymati (so'mda)?",
+    "type": "number",
+    "required": false,
+    "requiredIf": { "key": "garov_bor", "equals": "ha" },
+    "min": 0
+  },
+  {
+    "key": "kredit_mahsuloti",
+    "label": "Qaysi kredit mahsulotiga qiziqasiz?",
+    "type": "select",
+    "required": true,
+    "options": [
+      { "value": "micro_kichik_orta_biznes", "label": "Микро, кичик ва ўрта бизнесга" },
+      { "value": "dasturlar_doirasida", "label": "Дастурлар доирасида" },
+      { "value": "biznesga_birinchi_qadam", "label": "Бизнесга биринчи қадам" },
+      { "value": "oilaviy_tadbirkorlik", "label": "Оилавий тадбиркорлик" },
+      { "value": "kichik_biznes_qollab_quvvatlash", "label": "Кичик бизнесни узлуксиз қўллаб-қувватлаш" },
+      { "value": "mahalla_loyihasi", "label": "Маҳалла лойиҳаси" }
     ]
   }
 ]

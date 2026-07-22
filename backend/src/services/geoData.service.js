@@ -66,6 +66,11 @@ function getMahallaById(id) {
   return mahallaById.get(String(id)) || null;
 }
 
+function getMahallasByDistrict(districtId) {
+  const id = Number(districtId);
+  return mahallalar.filter((m) => m.districtId === id);
+}
+
 function getDistrictCreditSummaries({ regionId, districtId } = {}) {
   let result = districtCreditSummaries;
 
@@ -85,5 +90,6 @@ module.exports = {
   getDistricts,
   getMahallas,
   getMahallaById,
+  getMahallasByDistrict,
   getDistrictCreditSummaries,
 };

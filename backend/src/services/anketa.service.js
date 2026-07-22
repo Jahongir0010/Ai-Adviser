@@ -22,7 +22,22 @@ function resolveOptions(question, answersSoFar) {
     return geoDataService.getDistricts({ regionId: hududValue }).map((d) => ({ value: d.id, label: d.name }));
   }
 
+  if (question.optionsSource === 'mahallalar') {
+    const tumanValue = answersSoFar ? answersSoFar[question.dependsOn] : undefined;
+    if (tumanValue === undefined) return [];
+    return geoDataService.getMahallasByDistrict(tumanValue).map((m) => ({ value: m.id, label: m.name }));
+  }
+
   return [];
+}
+
+const DYNAMIC_OPTIONS_SOURCES = new Set(['districts', 'mahallalar']);
+
+function isRequired(question, data) {
+  if (question.requiredIf) {
+    return data[question.requiredIf.key] === question.requiredIf.equals;
+  }
+  return !!question.required;
 }
 
 function getQuestions() {
@@ -32,7 +47,8 @@ function getQuestions() {
     type: q.type,
     required: q.required,
     dependsOn: q.dependsOn || null,
-    options: q.type === 'select' && q.optionsSource !== 'districts' ? resolveOptions(q) : undefined,
+    requiredIf: q.requiredIf || null,
+    options: q.type === 'select' && !DYNAMIC_OPTIONS_SOURCES.has(q.optionsSource) ? resolveOptions(q) : undefined,
   }));
 }
 
@@ -45,7 +61,7 @@ function validateAnswers(answers = {}) {
     const raw = answers[question.key];
     const isEmpty = raw === undefined || raw === null || raw === '';
 
-    if (question.required && isEmpty) {
+    if (isRequired(question, data) && isEmpty) {
       errors.push({ key: question.key, message: `"${question.label}" majburiy` });
       continue;
     }
