@@ -1,0 +1,58 @@
+export const WIZARD_QUESTIONS = [
+  {
+    id: 'budget',
+    question: 'What is your investment budget?',
+    subtext: 'This helps AI calibrate realistic business scales for you.',
+    type: 'choice',
+    options: ['Under $10,000', '$10,000 – $50,000', '$50,000 – $200,000', '$200,000+'],
+  },
+  {
+    id: 'region',
+    question: 'Which region do you want to invest in?',
+    subtext: 'AI will cross-reference this with regional demand and competition data.',
+    type: 'choice',
+    options: ['Toshkent shahri', 'Samarqand', "Farg'ona Valley", 'Buxoro', 'Not sure yet'],
+  },
+  {
+    id: 'land',
+    question: 'Do you own land or commercial property?',
+    subtext: 'Ownership changes which business models are feasible.',
+    type: 'choice',
+    options: ['Yes, I own land', 'I plan to lease', 'No, need guidance'],
+  },
+  {
+    id: 'employees',
+    question: 'How many employees can you hire initially?',
+    subtext: 'Used to estimate operating costs and management complexity.',
+    type: 'choice',
+    options: ['Solo / 1 person', '2–5 employees', '6–20 employees', '20+ employees'],
+  },
+  {
+    id: 'industries',
+    question: 'Which industries interest you most?',
+    subtext: 'Select the sectors AI should prioritize when generating ideas.',
+    type: 'multi',
+    options: ['Retail & E-commerce', 'Food & Beverage', 'Tourism & Hospitality', 'Manufacturing', 'Technology & IT', 'Agriculture'],
+  },
+  {
+    id: 'risk',
+    question: 'How much risk can you accept?',
+    subtext: 'AI will weight opportunity score against volatility accordingly.',
+    type: 'choice',
+    options: ['Low risk, stable returns', 'Moderate risk', 'High risk, high reward'],
+  },
+  {
+    id: 'roi',
+    question: 'What is your expected ROI timeline?',
+    subtext: 'Helps prioritize fast-payback models vs. long-term growth plays.',
+    type: 'choice',
+    options: ['Under 1 year', '1–2 years', '2–5 years', '5+ years'],
+  },
+  {
+    id: 'experience',
+    question: "What's your entrepreneurial experience level?",
+    subtext: 'AI adjusts plan complexity and support recommendations accordingly.',
+    type: 'choice',
+    options: ['First-time founder', 'Some experience', 'Serial entrepreneur'],
+  },
+]
