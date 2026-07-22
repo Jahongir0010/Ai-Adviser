@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom'
 import {
   LayoutGrid,
   Sparkles,
+  Map as MapIcon,
   LineChart,
   Briefcase,
   Settings as SettingsIcon,
@@ -14,6 +15,7 @@ import { useLocale } from '../i18n/LocaleContext.jsx'
 
 const NAV_ITEMS = [
   { to: '/dashboard', labelKey: 'sidebar.dashboard', icon: LayoutGrid },
+  { to: '/map', labelKey: 'sidebar.map', icon: MapIcon },
   { to: '/business-idea', labelKey: 'sidebar.businessIdea', icon: Sparkles },
 ]
 

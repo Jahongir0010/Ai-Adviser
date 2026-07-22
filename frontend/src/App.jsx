@@ -3,6 +3,7 @@ import { LocaleProvider } from './i18n/LocaleContext.jsx'
 import AppLayout from './layout/AppLayout.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import BusinessIdea from './pages/BusinessIdea.jsx'
+import InteractiveMap from './pages/InteractiveMap.jsx'
 import Settings from './pages/Settings.jsx'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/business-idea" element={<BusinessIdea />} />
+            <Route path="/map" element={<InteractiveMap />} />
             <Route path="/settings" element={<Settings />} />
           </Route>
         </Routes>
