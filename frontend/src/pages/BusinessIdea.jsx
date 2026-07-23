@@ -7,11 +7,25 @@ import IdeaComparison from '../components/businessIdea/IdeaComparison.jsx'
 import BusinessPlanView from '../components/businessIdea/BusinessPlanView.jsx'
 import SectionHeading from '../components/ui/SectionHeading.jsx'
 import Button from '../components/ui/Button.jsx'
-import { GENERATED_IDEAS, BUSINESS_PLAN } from '../data/ideas.js'
-import { submitJavoblar } from '../data/anketaApi.js'
+import { apiPost } from '../lib/apiClient.js'
 import { useLocale } from '../i18n/LocaleContext.jsx'
 
 const STAGES = { WIZARD: 'wizard', GENERATING: 'generating', RESULTS: 'results', PLAN: 'plan' }
+
+const SOM_FORMAT = new Intl.NumberFormat('uz-UZ')
+
+// The backend returns investment/monthlyProfit/roi as plain numbers; IdeaCard
+// and IdeaComparison render them as already-formatted display strings (this
+// matched the old mock data's shape, e.g. "$48,000") - format once here so
+// those components don't need to know the field's raw numeric shape.
+function formatIdeas(rawIdeas) {
+  return rawIdeas.map((idea) => ({
+    ...idea,
+    investment: `${SOM_FORMAT.format(idea.investment)} so'm`,
+    monthlyProfit: `${SOM_FORMAT.format(idea.monthlyProfit)} so'm`,
+    roi: `${idea.roi}%`,
+  }))
+}
 
 export default function BusinessIdea() {
   const { t } = useLocale()
@@ -21,24 +35,44 @@ export default function BusinessIdea() {
   const [compareIds, setCompareIds] = useState([])
   const [showCompare, setShowCompare] = useState(false)
   const [activeIdeaId, setActiveIdeaId] = useState(null)
+  const [ideas, setIdeas] = useState([])
+  const [answers, setAnswers] = useState(null)
+  const [plan, setPlan] = useState(null)
+  const [planLoading, setPlanLoading] = useState(false)
+  const [planError, setPlanError] = useState(null)
 
-  const compareIdeas = useMemo(() => GENERATED_IDEAS.filter((i) => compareIds.includes(i.id)), [compareIds])
-  const activeIdea = useMemo(() => GENERATED_IDEAS.find((i) => i.id === activeIdeaId), [activeIdeaId])
+  const compareIdeas = useMemo(() => ideas.filter((i) => compareIds.includes(i.id)), [ideas, compareIds])
+  const activeIdea = useMemo(() => ideas.find((i) => i.id === activeIdeaId), [ideas, activeIdeaId])
 
-  function handleWizardComplete(answers) {
+  function handleWizardComplete(formAnswers) {
     setSubmitError(null)
     setStage(STAGES.GENERATING)
-    // Validates/normalizes the anketa answers server-side. The backend doesn't
-    // generate ideas from them yet (see anketa.service.js) - once it does, this
-    // is where that call replaces the GENERATED_IDEAS/BUSINESS_PLAN mocks. The
-    // minimum-duration timer keeps GeneratingState's 4-step animation from
-    // being cut short by a validation call that resolves almost instantly.
-    Promise.all([submitJavoblar(answers), new Promise((resolve) => setTimeout(resolve, 3400))])
-      .then(() => setStage(STAGES.RESULTS))
+    setAnswers(formAnswers)
+
+    // The minimum-duration timer keeps GeneratingState's 4-step animation from
+    // being cut short if the AI call happens to resolve unusually fast.
+    Promise.all([apiPost('/ai/biznes-goya', { answers: formAnswers }).then((r) => r.data), new Promise((resolve) => setTimeout(resolve, 3400))])
+      .then(([result]) => {
+        setIdeas(formatIdeas(result.ideas))
+        setStage(STAGES.RESULTS)
+      })
       .catch((error) => {
         setSubmitError(error.message)
         setStage(STAGES.WIZARD)
       })
+  }
+
+  function handleGeneratePlan(id) {
+    const idea = ideas.find((i) => i.id === id)
+    setActiveIdeaId(id)
+    setStage(STAGES.PLAN)
+    setPlan(null)
+    setPlanError(null)
+    setPlanLoading(true)
+    apiPost('/ai/biznes-goya/reja', { idea, answers })
+      .then((r) => setPlan(r.data))
+      .catch((error) => setPlanError(error.message))
+      .finally(() => setPlanLoading(false))
   }
 
   function toggleSave(id) {
@@ -55,10 +89,26 @@ export default function BusinessIdea() {
     setCompareIds([])
     setShowCompare(false)
     setActiveIdeaId(null)
+    setIdeas([])
+    setAnswers(null)
+    setPlan(null)
+    setPlanError(null)
   }
 
   if (stage === STAGES.PLAN) {
-    return <BusinessPlanView plan={BUSINESS_PLAN} idea={activeIdea} onBack={() => setStage(STAGES.RESULTS)} />
+    if (planError) {
+      return (
+        <div className="max-w-2xl mx-auto w-full flex flex-col items-center text-center gap-3 py-16">
+          <AlertTriangle className="size-8 text-rose-400" strokeWidth={1.5} />
+          <p className="text-[14px] text-rose-700">{planError}</p>
+          <Button variant="secondary" size="sm" onClick={() => setStage(STAGES.RESULTS)}>
+            {t('plan.backToIdeas')}
+          </Button>
+        </div>
+      )
+    }
+    if (planLoading || !plan) return <GeneratingState />
+    return <BusinessPlanView plan={plan} idea={activeIdea} onBack={() => setStage(STAGES.RESULTS)} />
   }
 
   return (
@@ -98,12 +148,12 @@ export default function BusinessIdea() {
             description={t('businessIdea.resultsDescription')}
             action={
               <span className="hidden sm:flex items-center gap-1.5 text-[12.5px] font-medium text-secondary-700 bg-secondary-50 rounded-full px-3 py-1.5">
-                <Sparkles className="size-3.5" /> {t('businessIdea.ideasGenerated').replace('{n}', GENERATED_IDEAS.length)}
+                <Sparkles className="size-3.5" /> {t('businessIdea.ideasGenerated').replace('{n}', ideas.length)}
               </span>
             }
           />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {GENERATED_IDEAS.map((idea) => (
+            {ideas.map((idea) => (
               <IdeaCard
                 key={idea.id}
                 idea={idea}
@@ -111,10 +161,7 @@ export default function BusinessIdea() {
                 isCompareSelected={compareIds.includes(idea.id)}
                 onToggleSave={toggleSave}
                 onToggleCompare={toggleCompare}
-                onGeneratePlan={(id) => {
-                  setActiveIdeaId(id)
-                  setStage(STAGES.PLAN)
-                }}
+                onGeneratePlan={handleGeneratePlan}
               />
             ))}
           </div>
