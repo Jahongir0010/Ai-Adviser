@@ -13,6 +13,7 @@ const mahallalar = loadJson('mahallalar.json');
 const districtCreditSummaries = loadJson('district-credit-summaries.json');
 const regionBoundaries = loadJson('hudud-chegaralari.geojson');
 const districtBoundaries = loadJson('tuman-chegaralari.geojson');
+const bozorRasmlari = loadJson('bozor-rasmlari.json');
 
 const regionById = new Map(regions.map((r) => [r.id, r]));
 const districtById = new Map(districts.map((d) => [d.id, d]));
@@ -129,6 +130,15 @@ function findMahallaBoundary() {
   return null;
 }
 
+function findAllBozorRasmlari() {
+  return bozorRasmlari;
+}
+
+function findBozorRasmlariByRegionId(regionId) {
+  const id = Number(regionId);
+  return bozorRasmlari.filter((b) => b.regionId === id);
+}
+
 module.exports = {
   findAllRegions,
   findRegionById,
@@ -144,4 +154,6 @@ module.exports = {
   findDistrictBoundary,
   findDistrictBoundariesByRegionId,
   findMahallaBoundary,
+  findAllBozorRasmlari,
+  findBozorRasmlariByRegionId,
 };

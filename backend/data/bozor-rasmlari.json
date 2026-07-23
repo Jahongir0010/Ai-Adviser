@@ -1,0 +1,13 @@
+[
+  { "regionId": 1, "bozorNomi": "Jahon bozori", "rasm": "andijon-jahon-bozori.jpeg" },
+  { "regionId": 2, "bozorNomi": "Markaziy bozor", "rasm": "buxoro-markaziy-bozori.jpeg" },
+  { "regionId": 3, "bozorNomi": "Markaziy bozor", "rasm": "jizzax-markaziy-bozori.jpeg" },
+  { "regionId": 5, "bozorNomi": "Markaziy bozor", "rasm": "namangan-markaziy-bozori.jpg" },
+  { "regionId": 6, "bozorNomi": "Siyob bozori", "rasm": "samarqand-siyob-bozori.jpeg" },
+  { "regionId": 8, "bozorNomi": "Termiz bozori", "rasm": "termiz-bozori.jpg" },
+  { "regionId": 10, "bozorNomi": "Chorsu bozori", "rasm": "tashkent-chorsu-bozori.jpeg" },
+  { "regionId": 10, "bozorNomi": "Oloy bozori", "rasm": "tashkent-oloy-bozori.jpeg" },
+  { "regionId": 11, "bozorNomi": "Markaziy bozor", "rasm": "fargona-markaziy-bozori.jpeg" },
+  { "regionId": 12, "bozorNomi": "Markaziy bozor", "rasm": "urganch-markaziy-bozori.jpg" },
+  { "regionId": 13, "bozorNomi": "Qarshi bozori", "rasm": "qarshi-bozori.jpg" }
+]

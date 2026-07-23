@@ -195,6 +195,28 @@ noted in *italics* for context only; they are not this log's responsibility.
   formatting, so once wired up the frontend will want to add locale-aware
   number/currency formatting rather than expecting a pre-formatted string.
 
+## 2026-07-23 (bozor rasmlari)
+
+- **Added real market photos**, served as static files rather than stored in
+  Postgres (images in a relational DB is an anti-pattern - bloats the DB,
+  slower to serve, no benefit here since there's no per-row access control
+  needed). `app.js` now serves `backend/public/` at `/static`; 11 photos live
+  in `backend/public/bozorlar/`, matched to regions by
+  `backend/data/bozor-rasmlari.json` (`regionId, bozorNomi, rasm`). New:
+  `GET /api/bozorlar` (all), `GET /api/regions/:id/bozorlar` (one region's
+  markets, empty array if none). Each item's `rasmUrl` is a relative path
+  (`/static/bozorlar/...`) - the frontend needs to prepend the backend's
+  origin (not the `/api` base) to build the full image URL.
+  - Tashkent shahri (`regionId: 10`) has two markets (Chorsu, Oloy).
+  - Navoiy, Tashkent viloyati, and Qoraqalpog'iston have no photo yet - not
+    fabricated, just missing from the source.
+  - **Data quality issue found and NOT used:** the source zip's "Guliston
+    Markaziy bozori.jpeg" was byte-identical (same MD5) to "Farg'ona
+    Markaziy bozori.jpeg" - a mislabeled duplicate, not a real Guliston/
+    Sirdaryo photo. Left Sirdaryo (`regionId: 7`) without an image rather
+    than show the wrong city's market under its name; a correct photo would
+    need to be re-sourced.
+
 ## Open items / known gaps
 
 - No mahalla-level location data (point or polygon) - blocks full zoom-to-

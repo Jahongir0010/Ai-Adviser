@@ -75,6 +75,18 @@ function getMahallaBoundary(mahallaId) {
   return geoRepository.findMahallaBoundary(mahallaId);
 }
 
+function withImageUrl(bozor) {
+  return { ...bozor, rasmUrl: `/static/bozorlar/${bozor.rasm}` };
+}
+
+function getAllBozorRasmlari() {
+  return geoRepository.findAllBozorRasmlari().map(withImageUrl);
+}
+
+function getBozorRasmlariByRegionId(regionId) {
+  return geoRepository.findBozorRasmlariByRegionId(regionId).map(withImageUrl);
+}
+
 module.exports = {
   getRegions,
   getRegionById,
@@ -91,4 +103,6 @@ module.exports = {
   getDistrictBoundary,
   getDistrictBoundariesByRegionId,
   getMahallaBoundary,
+  getAllBozorRasmlari,
+  getBozorRasmlariByRegionId,
 };
