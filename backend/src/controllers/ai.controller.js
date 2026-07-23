@@ -71,6 +71,16 @@ async function biznesGoya(req, res, next) {
   }
 }
 
+async function biznesGoyaReja(req, res, next) {
+  try {
+    const { idea, answers } = req.body;
+    const result = await biznesGoyaService.generatePlan({ idea, answers });
+    res.json({ success: true, data: result });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   chat,
   generate,
@@ -79,4 +89,5 @@ module.exports = {
   improve,
   ideas,
   biznesGoya,
+  biznesGoyaReja,
 };
