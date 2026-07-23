@@ -167,6 +167,16 @@ noted in *italics* for context only; they are not this log's responsibility.
   an in-memory cache that would silently break on server restart or with
   more than one server instance. Uses `answers.mahalla` to re-pull the same
   real mahalla statistics so the plan stays grounded, not just the idea text.
+- **Fixed a startup footgun in `server.js`:** it fell back to port 5000 when
+  `PORT` wasn't set, but macOS commonly has ControlCenter/AirPlay already
+  listening there - so any time `.env` failed to load (wrong working
+  directory, missing file), the server would silently try to bind 5000 and
+  either crash or behave unexpectedly, while the frontend kept trying (its
+  own default) port 5000 too but with nothing healthy behind it. Default is
+  now 4000, and a `server.on('error', ...)` handler prints a clear message
+  for `EADDRINUSE` instead of a raw stack trace. Root `README.md` (shared
+  file) rewritten with one unified setup+run process for both computers,
+  including a "backendga ulanib bo'lmadi" troubleshooting section.
 
 ## Open items / known gaps
 
