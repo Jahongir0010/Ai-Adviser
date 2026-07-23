@@ -40,10 +40,24 @@ function getRegionChegara(req, res) {
   res.json({ success: true, data: boundary });
 }
 
+function listRegionBozorlari(req, res) {
+  const region = geoService.getRegionById(req.params.id);
+  if (!region) {
+    return res.status(404).json({ success: false, message: 'Hudud topilmadi' });
+  }
+  res.json({ success: true, data: geoService.getBozorRasmlariByRegionId(req.params.id) });
+}
+
+function listBozorlar(req, res) {
+  res.json({ success: true, data: geoService.getAllBozorRasmlari() });
+}
+
 module.exports = {
   listRegions,
   getRegion,
   listRegionDistricts,
   getRegionKreditStatistika,
   getRegionChegara,
+  listRegionBozorlari,
+  listBozorlar,
 };
