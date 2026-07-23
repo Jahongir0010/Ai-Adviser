@@ -163,7 +163,10 @@ export default function InfoPanel({
   }, [mahallaListQuery.data, search])
 
   return (
-    <GlassCard className="absolute top-3 right-3 bottom-3 z-10 w-[320px] max-w-[calc(100%-24px)] p-4 overflow-y-auto">
+    <GlassCard
+      variant="frosted"
+      className="absolute top-3 right-3 bottom-3 z-10 w-[320px] max-w-[calc(100%-24px)] p-4 overflow-y-auto"
+    >
       {level === LEVELS.COUNTRY && (
         <EmptyState icon={Sparkles} title={t('map.emptyState.country.title')} description={t('map.emptyState.country.description')} />
       )}

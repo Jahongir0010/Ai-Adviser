@@ -40,7 +40,18 @@ const MapCanvas = forwardRef(function MapCanvas({ children, className = '' }, re
       fitBoundsOptions: { padding: FIT_BOUNDS_PADDING },
       attributionControl: false,
     })
-    instance.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right')
+    // The InfoPanel overlays the entire right edge of the map (top-3 to bottom-3),
+    // so controls placed in either right-hand corner would be hidden behind it.
+    instance.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-left')
+    instance.addControl(
+      new maplibregl.GeolocateControl({
+        positionOptions: { enableHighAccuracy: true },
+        trackUserLocation: true,
+        showUserLocation: true,
+        showAccuracyCircle: true,
+      }),
+      'bottom-left'
+    )
     instance.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right')
     mapInstanceRef.current = instance
 
