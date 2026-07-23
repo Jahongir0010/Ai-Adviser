@@ -17,6 +17,8 @@ export default function PolygonLayer({
   fillColor = '#005BAC',
   lineColor = '#005BAC',
   fillOpacity,
+  lineWidth,
+  labelExpression,
   onSelect,
   onHover,
 }) {
@@ -53,7 +55,7 @@ export default function PolygonLayer({
       id: lineLayerId,
       type: 'line',
       source: sourceId,
-      paint: { 'line-color': lineColor, 'line-width': 1.6 },
+      paint: { 'line-color': lineColor, 'line-width': lineWidth ?? 1.6 },
     })
     if (showLabels) {
       map.addLayer({
@@ -61,7 +63,7 @@ export default function PolygonLayer({
         type: 'symbol',
         source: sourceId,
         layout: {
-          'text-field': ['get', 'name'],
+          'text-field': labelExpression ?? ['get', 'name'],
           'text-size': 11.5,
           'text-font': ['Noto Sans Regular'],
           'text-max-width': 8,
@@ -92,6 +94,14 @@ export default function PolygonLayer({
     map.setFilter(lineLayerId, filter)
     if (showLabels) map.setFilter(labelLayerId, selectedId != null ? null : filter)
   }, [map, selectedId, idProperty, showLabels, fillLayerId, lineLayerId, labelLayerId])
+
+  // lineWidth may be a data-driven expression that changes as the caller's
+  // own selection state changes (e.g. to emphasize one region's outline)
+  // without hiding siblings via selectedId - keep it reactive post-mount.
+  useEffect(() => {
+    if (!map || !map.getLayer(lineLayerId)) return
+    map.setPaintProperty(lineLayerId, 'line-width', lineWidth ?? 1.6)
+  }, [map, lineWidth, lineLayerId])
 
   // Click + hover interaction, only while this level is the "active" one.
   useEffect(() => {

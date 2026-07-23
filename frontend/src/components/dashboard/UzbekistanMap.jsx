@@ -1,110 +1,121 @@
 import { useMemo, useState } from 'react'
-import { computeRegionCells, MAP_VIEWBOX, UZ_OUTLINE_PATH } from '../../utils/geo.js'
+import MapCanvas from '../../features/map/components/MapCanvas.jsx'
+import PolygonLayer from '../../features/map/components/layers/PolygonLayer.jsx'
+import { useRegionBoundaries } from '../../features/map/hooks/useRegionBoundaries.js'
 import { REGIONS } from '../../data/regions.js'
 import { useLocale } from '../../i18n/LocaleContext.jsx'
 import { trRegionName } from '../../i18n/dictionaries.js'
 
+// Numeric backend regionId (see backend/data/regions.json) -> this app's
+// string region slug (the keys data/regions.js and i18n REGION_NAMES use).
+const REGION_SLUG_BY_ID = {
+  1: 'andijon',
+  2: 'buxoro',
+  3: 'jizzax',
+  4: 'navoiy',
+  5: 'namangan',
+  6: 'samarqand',
+  7: 'sirdaryo',
+  8: 'surxondaryo',
+  9: 'toshkent_v',
+  10: 'toshkent_c',
+  11: 'fargona',
+  12: 'xorazm',
+  13: 'qashqadaryo',
+  14: 'qoraqalpogiston',
+}
+const REGION_ID_BY_SLUG = Object.fromEntries(Object.entries(REGION_SLUG_BY_ID).map(([id, slug]) => [slug, Number(id)]))
+
 const SCORES = Object.values(REGIONS).map((r) => r.aiOpportunityScore)
 const SCORE_MIN = Math.min(...SCORES)
 const SCORE_MAX = Math.max(...SCORES)
+const PRIMARY = [0, 91, 172] // primary-600
+const SECONDARY = [0, 168, 107] // secondary-500
 
 function scoreToColor(score) {
-  // stretch across the actual score range so regions are visually distinguishable,
-  // interpolating brand primary (lower relative opportunity) to secondary (higher)
   const t = Math.min(Math.max((score - SCORE_MIN) / (SCORE_MAX - SCORE_MIN || 1), 0), 1)
-  const c1 = [0, 91, 172] // primary-600
-  const c2 = [0, 168, 107] // secondary-500
-  const mix = (a, b, t) => Math.round(a + (b - a) * t)
-  const r = mix(c1[0], c2[0], t)
-  const g = mix(c1[1], c2[1], t)
-  const b = mix(c1[2], c2[2], t)
-  return `rgb(${r},${g},${b})`
+  const mix = (a, b) => Math.round(a + (b - a) * t)
+  return `rgb(${mix(PRIMARY[0], SECONDARY[0])},${mix(PRIMARY[1], SECONDARY[1])},${mix(PRIMARY[2], SECONDARY[2])})`
+}
+
+/** ['match', ['get','regionId'], id, color, id, color, ..., fallback] */
+function buildFillColorExpression() {
+  const expr = ['match', ['get', 'regionId']]
+  for (const [id, slug] of Object.entries(REGION_SLUG_BY_ID)) {
+    expr.push(Number(id), scoreToColor(REGIONS[slug]?.aiOpportunityScore ?? 50))
+  }
+  expr.push('#EEF3F9')
+  return expr
+}
+
+/** ['match', ['get','regionId'], id, translatedName, id, translatedName, ..., ''] - rebuilt per locale. */
+function buildLabelExpression(locale) {
+  const expr = ['match', ['get', 'regionId']]
+  for (const [id, slug] of Object.entries(REGION_SLUG_BY_ID)) {
+    expr.push(Number(id), trRegionName(slug, locale))
+  }
+  expr.push('')
+  return expr
 }
 
 export default function UzbekistanMap({ selectedId, onSelect }) {
-  const cells = useMemo(() => computeRegionCells(), [])
-  const [hoveredId, setHoveredId] = useState(null)
   const { locale, t } = useLocale()
+  const regionsQuery = useRegionBoundaries()
+  const [hoveredRegionId, setHoveredRegionId] = useState(null)
+
+  const fillColor = useMemo(() => buildFillColorExpression(), [])
+  const labelExpression = useMemo(() => buildLabelExpression(locale), [locale])
+
+  const selectedRegionId = REGION_ID_BY_SLUG[selectedId] ?? null
+  const lineWidth = useMemo(() => {
+    const ids = [...new Set([selectedRegionId, hoveredRegionId].filter((v) => v != null))]
+    if (ids.length === 0) return 1.4
+    const expr = ['match', ['get', 'regionId']]
+    for (const id of ids) expr.push(id, id === selectedRegionId ? 3 : 2.2)
+    expr.push(1.4)
+    return expr
+  }, [selectedRegionId, hoveredRegionId])
+
+  function handleSelect(feature) {
+    const slug = REGION_SLUG_BY_ID[feature.properties.regionId]
+    if (slug) onSelect(slug)
+  }
+
+  function handleHover(feature) {
+    setHoveredRegionId(feature ? feature.properties.regionId : null)
+  }
 
   return (
     <div className="relative">
-      <svg
-        viewBox={`0 0 ${MAP_VIEWBOX.width} ${MAP_VIEWBOX.height}`}
-        className="w-full h-auto select-none"
-        role="img"
-        aria-label="Interactive map of Uzbekistan regions"
-      >
-        <defs>
-          <clipPath id="uz-outline-clip">
-            <path d={UZ_OUTLINE_PATH} />
-          </clipPath>
-          <filter id="map-shadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="6" stdDeviation="10" floodColor="#0b3255" floodOpacity="0.16" />
-          </filter>
-        </defs>
-
-        <path d={UZ_OUTLINE_PATH} fill="#eef3f9" />
-
-        <g clipPath="url(#uz-outline-clip)">
-          {Object.values(cells).map((cell) => {
-            const data = REGIONS[cell.id]
-            const isSelected = selectedId === cell.id
-            const isHovered = hoveredId === cell.id
-            return (
-              <path
-                key={cell.id}
-                d={cell.path}
-                fill={scoreToColor(data?.aiOpportunityScore ?? 50)}
-                stroke="#f5f8fc"
-                strokeWidth={isSelected ? 3 : 2}
-                style={{
-                  cursor: 'pointer',
-                  opacity: isHovered || isSelected ? 1 : 0.88,
-                  filter: isSelected ? 'url(#map-shadow)' : undefined,
-                  transition: 'opacity 0.2s ease, stroke-width 0.2s ease',
-                }}
-                onMouseEnter={() => setHoveredId(cell.id)}
-                onMouseLeave={() => setHoveredId(null)}
-                onClick={() => onSelect(cell.id)}
-              />
-            )
-          })}
-          {Object.values(cells).map((cell) =>
-            selectedId === cell.id ? (
-              <path
-                key={`ring-${cell.id}`}
-                d={cell.path}
-                fill="none"
-                stroke="#005BAC"
-                strokeWidth={2.5}
-                pointerEvents="none"
-              />
-            ) : null
+      <div className="relative h-[440px] rounded-[14px] overflow-hidden border border-ink-100">
+        <MapCanvas>
+          {regionsQuery.data && (
+            <PolygonLayer
+              id="dashboard-regions"
+              data={regionsQuery.data}
+              idProperty="regionId"
+              selectedId={null}
+              interactive
+              showLabels
+              fillColor={fillColor}
+              fillOpacity={0.86}
+              lineColor="#ffffff"
+              lineWidth={lineWidth}
+              labelExpression={labelExpression}
+              onSelect={handleSelect}
+              onHover={handleHover}
+            />
           )}
-        </g>
+        </MapCanvas>
 
-        <path d={UZ_OUTLINE_PATH} fill="none" stroke="#0b3255" strokeOpacity={0.12} strokeWidth={2} />
+        {hoveredRegionId != null && (
+          <div className="absolute top-3 left-3 rounded-full bg-white/95 backdrop-blur px-3 py-1.5 border border-ink-100 shadow-soft text-[12.5px] font-semibold text-ink-800 pointer-events-none">
+            {trRegionName(REGION_SLUG_BY_ID[hoveredRegionId], locale)}
+          </div>
+        )}
+      </div>
 
-        {Object.values(cells).map((cell) => (
-          <text
-            key={`label-${cell.id}`}
-            x={cell.x}
-            y={cell.y}
-            textAnchor="middle"
-            pointerEvents="none"
-            fontSize={cell.id === 'toshkent_c' || cell.id === 'sirdaryo' ? 8.5 : 10}
-            fontWeight={selectedId === cell.id ? 700 : 600}
-            fill="#0b3255"
-            paintOrder="stroke"
-            stroke="rgba(255,255,255,0.85)"
-            strokeWidth={3}
-          >
-            {trRegionName(cell.id, locale)}
-          </text>
-        ))}
-      </svg>
-
-      <div className="absolute bottom-2 left-2 flex items-center gap-2 rounded-full bg-white/85 backdrop-blur px-3 py-1.5 border border-ink-100 shadow-soft">
+      <div className="absolute bottom-5 left-5 flex items-center gap-2 rounded-full bg-white/85 backdrop-blur px-3 py-1.5 border border-ink-100 shadow-soft">
         <span className="text-[11px] font-medium text-ink-500">{t('map.opportunityScore')}</span>
         <span className="h-2 w-20 rounded-full bg-gradient-to-r from-primary-600 to-secondary-500" />
         <span className="text-[11px] text-ink-400">{t('map.lowToHigh')}</span>
