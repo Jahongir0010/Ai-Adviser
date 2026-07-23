@@ -143,6 +143,30 @@ noted in *italics* for context only; they are not this log's responsibility.
 - `errorHandler.js` now forwards `err.details` as an `errors` array in the
   response when present (used by the anketa-validation-failure path above),
   without changing the shape for errors that don't set it.
+- *(Frontend, for context: reviewed `/api/ai/biznes-goya` while preparing to
+  integrate it, and flagged three real gaps - addressed same day, see below.)*
+- **`POST /api/ai/biznes-goya` now returns trilingual text.** Every
+  text/enum field (`name`, `payback`, `marketDemand`, `competitionLevel`,
+  `growthPotential`, `summary`) is now `{en, uz, ru}` instead of a single
+  Uzbek string, generated in one Gemini call via a `responseSchema` where
+  those fields are nested objects - matches `frontend/src/data/ideas.js`'s
+  `GENERATED_IDEAS` shape. `investment`/`monthlyProfit`/`roi` stay plain
+  numbers (so'm / percent) since they don't need translation, just
+  locale-aware formatting on the frontend. Each idea also now gets a
+  server-generated `id` (`crypto.randomUUID()`) for React keys/selection.
+- **New: `POST /api/ai/biznes-goya/reja`** - generates the full 10-section
+  business plan (`executive-summary, market-analysis, competitor-analysis,
+  swot, marketing-strategy, financial-forecast, risk-assessment,
+  implementation-roadmap, investment-plan, revenue-projection`), each
+  `{id, title, body}` all trilingual, in one Gemini call. Body is
+  `{ idea, answers }` - the frontend passes back the specific idea object it
+  already has (from `/api/ai/biznes-goya`) plus the original anketa answers;
+  **there is no server-side idea storage/lookup by id** (no persistence
+  layer for generated content yet), so this is intentionally stateless
+  rather than `/api/ai/biznes-goya/:ideaId/reja` as first suggested - avoids
+  an in-memory cache that would silently break on server restart or with
+  more than one server instance. Uses `answers.mahalla` to re-pull the same
+  real mahalla statistics so the plan stays grounded, not just the idea text.
 
 ## Open items / known gaps
 

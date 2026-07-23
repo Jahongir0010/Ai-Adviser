@@ -55,4 +55,13 @@ router.post(
   aiController.biznesGoya
 );
 
+router.post(
+  '/ai/biznes-goya/reja',
+  validateBody({
+    idea: { required: true, type: 'object' },
+    answers: { required: false, type: 'object' },
+  }),
+  aiController.biznesGoyaReja
+);
+
 module.exports = router;
