@@ -367,7 +367,7 @@ export const UI = {
   'markets.detail.coverage': { en: 'Coverage', uz: 'Qamrov', ru: 'Охват' },
   'markets.detail.marketType': { en: 'Market type', uz: 'Bozor turi', ru: 'Тип рынка' },
   'markets.detail.address': { en: 'Address', uz: 'Manzil', ru: 'Адрес' },
-  'markets.detail.mapPlaceholder': { en: 'Map preview unavailable in this demo', uz: 'Ushbu demo rejimida xarita mavjud emas', ru: 'Карта недоступна в этой демо-версии' },
+  'markets.detail.getDirections': { en: 'Get directions', uz: "Yo'nalish olish", ru: 'Маршрут' },
   'markets.detail.mainProducts': { en: 'Main Products', uz: 'Asosiy mahsulotlar', ru: 'Основные товары' },
   'markets.detail.facilities': { en: 'Facilities', uz: 'Infratuzilma', ru: 'Инфраструктура' },
   'markets.detail.facility.parking': { en: 'Parking', uz: 'Avtoturargoh', ru: 'Парковка' },
@@ -420,17 +420,4 @@ export const UI = {
   'markets.search.monthlyRevenue': { en: 'Estimated Monthly Revenue', uz: 'Taxminiy oylik daromad', ru: 'Ожидаемая месячная выручка' },
   'markets.search.expectedProfit': { en: 'Expected Profit', uz: 'Kutilayotgan foyda', ru: 'Ожидаемая прибыль' },
   'markets.search.recommendation': { en: 'Business Recommendation', uz: 'Biznes tavsiyasi', ru: 'Бизнес-рекомендация' },
-
-  'markets.charts.demandByRegion': { en: 'Demand by Region', uz: 'Hududlar bo‘yicha talab', ru: 'Спрос по регионам' },
-  'markets.charts.topProducts': { en: 'Most Sold Products', uz: 'Eng ko‘p sotiladigan mahsulotlar', ru: 'Самые продаваемые товары' },
-  'markets.charts.priceComparison': { en: 'Price Comparison', uz: 'Narxlar taqqoslash', ru: 'Сравнение цен' },
-  'markets.charts.marketDensity': { en: 'Market Density', uz: 'Bozorlar zichligi', ru: 'Плотность рынков' },
-  'markets.charts.seasonality': { en: 'Seasonality', uz: 'Mavsumiylik', ru: 'Сезонность' },
-  'markets.charts.marketsSuffix': { en: 'markets', uz: 'ta bozor', ru: 'рынков' },
-  'markets.charts.sectionTitle': { en: 'Market Analytics', uz: 'Bozor tahlili', ru: 'Аналитика рынков' },
-  'markets.charts.sectionDescription': {
-    en: 'Demand, pricing, density, and seasonality patterns across all tracked markets.',
-    uz: 'Barcha kuzatilayotgan bozorlar bo‘yicha talab, narx, zichlik va mavsumiylik ko‘rsatkichlari.',
-    ru: 'Спрос, цены, плотность и сезонность по всем отслеживаемым рынкам.',
-  },
 }
