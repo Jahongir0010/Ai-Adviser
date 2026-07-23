@@ -103,6 +103,15 @@ noted in *italics* for context only; they are not this log's responsibility.
   configured|not_configured`. These are generic utility endpoints, not yet
   wired to the anketa answers for grounded business-idea generation - that's
   the natural next step once an idea-generation feature is designed.
+- **Fixed the Gemini model name after the real key was added:** the pinned
+  `gemini-2.5-flash` model returned `404 ... no longer available to new
+  users` for this API key/project even though it's still listed by
+  `models.list()` (Google restricts some dated model names per-project).
+  Switched the default to the `gemini-flash-latest` alias, which Google
+  keeps pointing at whatever their current recommended flash model is -
+  avoids this breaking again the next time a dated model gets retired. All
+  six `/api/ai/*` endpoints verified working end-to-end with a real key
+  (chat history round-trip included).
 
 ## Open items / known gaps
 
@@ -114,5 +123,3 @@ noted in *italics* for context only; they are not this log's responsibility.
 - Gemini is integrated as generic AI utility endpoints; nothing yet combines
   anketa answers + geo data + Gemini into the actual "business idea"
   generation feature described in the product flow.
-- A real `GEMINI_API_KEY` still needs to be pasted into `backend/.env` before
-  any `/api/ai/*` endpoint will actually work end-to-end.

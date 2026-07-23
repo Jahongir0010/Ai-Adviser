@@ -1,6 +1,8 @@
 const { GoogleGenAI } = require('@google/genai');
 
-const DEFAULT_MODEL = 'gemini-2.5-flash';
+// "-latest" alias always resolves to Google's current recommended flash model,
+// so this doesn't need updating every time a dated model version is retired.
+const DEFAULT_MODEL = 'gemini-flash-latest';
 
 let client = null;
 
