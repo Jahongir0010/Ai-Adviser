@@ -31,18 +31,23 @@ export default function MapExplorer() {
     (feature) => {
       const { regionId, name } = feature.properties
       drilldown.selectRegion({ id: regionId, name })
-      mapRef.current?.flyToBounds(bboxOfFeature(feature))
+      // MapLibre tiles GeoJSON sources internally, so a click-event feature's
+      // geometry may be clipped to the tile that was clicked - look up the
+      // untiled feature from the source data for an accurate flyTo bbox.
+      const fullFeature = findFeatureByProperty(regionsQuery.data, 'regionId', regionId) ?? feature
+      mapRef.current?.flyToBounds(bboxOfFeature(fullFeature))
     },
-    [drilldown]
+    [drilldown, regionsQuery.data]
   )
 
   const handleSelectDistrictFeature = useCallback(
     (feature) => {
       const { districtId, name } = feature.properties
       drilldown.selectDistrict({ id: districtId, name })
-      mapRef.current?.flyToBounds(bboxOfFeature(feature))
+      const fullFeature = findFeatureByProperty(districtsQuery.data, 'districtId', districtId) ?? feature
+      mapRef.current?.flyToBounds(bboxOfFeature(fullFeature))
     },
-    [drilldown]
+    [drilldown, districtsQuery.data]
   )
 
   const handleSelectDistrictFromList = useCallback(
