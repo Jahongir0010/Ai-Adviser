@@ -17,12 +17,10 @@ const NAV_ITEMS = [
   { to: '/dashboard', labelKey: 'sidebar.dashboard', icon: LayoutGrid },
   { to: '/map', labelKey: 'sidebar.map', icon: MapIcon },
   { to: '/business-idea', labelKey: 'sidebar.businessIdea', icon: Sparkles },
+  { to: '/market-reports', labelKey: 'sidebar.marketReports', icon: LineChart },
 ]
 
-const SOON_ITEMS = [
-  { labelKey: 'sidebar.marketReports', icon: LineChart },
-  { labelKey: 'sidebar.portfolio', icon: Briefcase },
-]
+const SOON_ITEMS = [{ labelKey: 'sidebar.portfolio', icon: Briefcase }]
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)

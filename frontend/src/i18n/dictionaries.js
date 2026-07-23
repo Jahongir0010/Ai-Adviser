@@ -122,6 +122,40 @@ export const INDUSTRIES = {
   Construction: { uz: 'Qurilish', ru: 'Строительство' },
 }
 
+// Keyed by the canonical English string used in data/markets.js, matching the
+// REGION_NAMES/INDUSTRIES convention above (trMap returns the key as-is for 'en').
+export const PRODUCT_NAMES = {
+  Fruit: { uz: 'Meva', ru: 'Фрукты' },
+  Vegetables: { uz: 'Sabzavot', ru: 'Овощи' },
+  Meat: { uz: "Go'sht", ru: 'Мясо' },
+  Dairy: { uz: 'Sut mahsulotlari', ru: 'Молочные продукты' },
+  Spices: { uz: 'Ziravorlar', ru: 'Специи' },
+  Bread: { uz: 'Non', ru: 'Хлеб' },
+  Nuts: { uz: "Yong'oq", ru: 'Орехи' },
+  Flowers: { uz: 'Gullar', ru: 'Цветы' },
+  Textile: { uz: "To'qimachilik", ru: 'Текстиль' },
+  Shoes: { uz: 'Poyabzal', ru: 'Обувь' },
+}
+
+export const MARKET_TYPE_NAMES = {
+  "Farmers' market": { uz: 'Dehqon bozori', ru: 'Дехканский рынок' },
+  Wholesale: { uz: 'Ulgurji', ru: 'Оптовый' },
+  Retail: { uz: 'Chakana', ru: 'Розничный' },
+  Universal: { uz: 'Universal', ru: 'Универсальный' },
+}
+
+export const COVERAGE_NAMES = {
+  Republic: { uz: 'Respublika', ru: 'Республика' },
+  Region: { uz: 'Viloyat', ru: 'Область' },
+  District: { uz: 'Tuman', ru: 'Район' },
+}
+
+export const SALE_TYPES = {
+  Retail: { uz: 'Chakana', ru: 'Розница' },
+  Wholesale: { uz: 'Ulgurji', ru: 'Опт' },
+  Export: { uz: 'Eksport', ru: 'Экспорт' },
+}
+
 export const GOV_PROGRAMS = {
   'Aral Sea Region Investment Incentives': {
     uz: "Orolbo'yi mintaqasi investitsiya imtiyozlari",

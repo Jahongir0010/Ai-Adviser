@@ -16,6 +16,7 @@ export default function PolygonLayer({
   showLabels = true,
   fillColor = '#005BAC',
   lineColor = '#005BAC',
+  fillOpacity,
   onSelect,
   onHover,
 }) {
@@ -45,7 +46,7 @@ export default function PolygonLayer({
       source: sourceId,
       paint: {
         'fill-color': fillColor,
-        'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.38, 0.16],
+        'fill-opacity': fillOpacity ?? ['case', ['boolean', ['feature-state', 'hover'], false], 0.38, 0.16],
       },
     })
     map.addLayer({

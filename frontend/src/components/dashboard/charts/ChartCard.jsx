@@ -1,8 +1,8 @@
 import GlassCard from '../../ui/GlassCard.jsx'
 
-export default function ChartCard({ title, subtitle, legend, children }) {
+export default function ChartCard({ title, subtitle, legend, children, className = '' }) {
   return (
-    <GlassCard className="p-5 flex flex-col">
+    <GlassCard className={`p-5 flex flex-col ${className}`}>
       <div className="flex items-start justify-between gap-3 mb-1">
         <div>
           <h4 className="font-semibold text-[14.5px] text-ink-900">{title}</h4>
