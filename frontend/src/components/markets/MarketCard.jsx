@@ -2,29 +2,29 @@ import { motion } from 'framer-motion'
 import { MapPin, Bookmark, FileText, Sparkles, BadgeCheck, Scale, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import GlassCard from '../ui/GlassCard.jsx'
 import Button from '../ui/Button.jsx'
-import { MARKET_TYPE_ICONS, MARKET_TYPE_GRADIENT } from './marketIcons.js'
+import { MARKET_TYPE_ICONS } from './marketIcons.js'
 import { getRegionName } from '../../data/markets.js'
 import { MARKET_TYPE_NAMES, COVERAGE_NAMES, trMap } from '../../i18n/dictionaries.js'
 import { useLocale, tr } from '../../i18n/LocaleContext.jsx'
-import BannerPattern from './BannerPattern.jsx'
+import MarketBanner from './MarketBanner.jsx'
 
 const TREND_ICON = { up: TrendingUp, down: TrendingDown, flat: Minus }
 const TREND_TONE = { up: 'text-secondary-700 bg-secondary-50', down: 'text-rose-700 bg-rose-50', flat: 'text-ink-500 bg-ink-100' }
 
-export default function MarketCard({ market, isSaved, isCompareSelected, onToggleSave, onToggleCompare, onViewDetails, onAiAnalysis }) {
+export default function MarketCard({ market, photoUrl, isSaved, isCompareSelected, onToggleSave, onToggleCompare, onViewDetails, onAiAnalysis }) {
   const { locale, t } = useLocale()
   const TypeIcon = MARKET_TYPE_ICONS[market.marketType] ?? MARKET_TYPE_ICONS.Universal
-  const gradient = MARKET_TYPE_GRADIENT[market.marketType] ?? MARKET_TYPE_GRADIENT.Universal
   const TrendIcon = TREND_ICON[market.trend]
 
   return (
     <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2, ease: 'easeOut' }} className="h-full">
       <GlassCard className="p-0 flex flex-col h-full overflow-hidden hover:shadow-soft-lg transition-shadow">
-        <div className={`relative h-32 shrink-0 flex items-center justify-center bg-gradient-to-br ${gradient}`}>
-          <BannerPattern />
-          <span className="size-14 rounded-2xl bg-white/15 flex items-center justify-center">
-            <TypeIcon className="size-7 text-white" strokeWidth={1.5} />
-          </span>
+        <MarketBanner market={market} photoUrl={photoUrl} className="h-32 shrink-0 flex items-center justify-center">
+          {!photoUrl && (
+            <span className="size-14 rounded-2xl bg-white/15 flex items-center justify-center">
+              <TypeIcon className="size-7 text-white" strokeWidth={1.5} />
+            </span>
+          )}
           <span className={`absolute z-10 top-2.5 right-2.5 inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${TREND_TONE[market.trend]}`}>
             <TrendIcon className="size-3" strokeWidth={2.5} />
           </span>
@@ -37,7 +37,7 @@ export default function MarketCard({ market, isSaved, isCompareSelected, onToggl
           >
             <Bookmark className="size-4" strokeWidth={2} fill={isSaved ? 'currentColor' : 'none'} />
           </button>
-        </div>
+        </MarketBanner>
 
         <div className="p-4 flex flex-col flex-1">
           <h3 className="font-display font-bold text-[15.5px] text-ink-900 leading-snug">{tr(market.name, locale)}</h3>

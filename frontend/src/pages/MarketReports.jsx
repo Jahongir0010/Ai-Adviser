@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Store } from 'lucide-react'
 import GlassCard from '../components/ui/GlassCard.jsx'
 import StatsRow from '../components/markets/StatsRow.jsx'
@@ -8,7 +8,8 @@ import MarketCard from '../components/markets/MarketCard.jsx'
 import MarketDetailModal from '../components/markets/MarketDetailModal.jsx'
 import MarketComparison from '../components/markets/MarketComparison.jsx'
 import AISmartSearch from '../components/markets/AISmartSearch.jsx'
-import { MARKETS, REGION_NAMES_BY_ID, getRegionName } from '../data/markets.js'
+import { MARKETS, REGION_NAMES_BY_ID, getRegionName, matchMarketPhotos } from '../data/markets.js'
+import { getAllBozorRasmlari } from '../data/bozorRasmlariApi.js'
 import { PRODUCT_NAMES } from '../i18n/dictionaries.js'
 import { useLocale } from '../i18n/LocaleContext.jsx'
 
@@ -22,6 +23,22 @@ export default function MarketReports() {
   const [compareIds, setCompareIds] = useState([])
   const [showCompare, setShowCompare] = useState(false)
   const [activeMarketId, setActiveMarketId] = useState(null)
+  const [photoUrlByMarketId, setPhotoUrlByMarketId] = useState({})
+
+  useEffect(() => {
+    let cancelled = false
+    getAllBozorRasmlari()
+      .then((photos) => {
+        if (!cancelled) setPhotoUrlByMarketId(matchMarketPhotos(photos))
+      })
+      .catch(() => {
+        // Real photos are a progressive enhancement - the illustrated banner
+        // fallback already covers every market, so a failed fetch is silent.
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const regions = useMemo(
     () => Object.keys(REGION_NAMES_BY_ID).map((id) => ({ id, name: getRegionName(Number(id), locale) })).sort((a, b) => a.name.localeCompare(b.name)),
@@ -123,6 +140,7 @@ export default function MarketReports() {
                 <MarketCard
                   key={market.id}
                   market={market}
+                  photoUrl={photoUrlByMarketId[market.id]}
                   isSaved={savedIds.includes(market.id)}
                   isCompareSelected={compareIds.includes(market.id)}
                   onToggleSave={toggleSave}
@@ -148,6 +166,7 @@ export default function MarketReports() {
 
       <MarketDetailModal
         market={activeMarket}
+        photoUrl={activeMarket && photoUrlByMarketId[activeMarket.id]}
         onClose={() => setActiveMarketId(null)}
         onGenerateIdea={handleGenerateIdea}
         onViewReport={handleViewReport}

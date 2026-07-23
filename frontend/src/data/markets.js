@@ -40,6 +40,43 @@ export function getGoogleMapsDirectionsUrl(market) {
   return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
 }
 
+/**
+ * Matches backend `GET /api/bozorlar` entries to this file's MARKETS by
+ * regionId (most regions only have one photographed market and one entry
+ * here, so that alone is enough) - when a region has more than one of each
+ * (currently just Tashkent: Chorsu + Oloy), disambiguate by comparing each
+ * side's first name word ("Chorsu"/"Oloy").
+ * @param {{regionId: number, bozorNomi: string, rasmUrl: string}[]} bozorRasmlari
+ * @returns {Record<string, string>} market.id -> absolute-path rasmUrl
+ */
+export function matchMarketPhotos(bozorRasmlari) {
+  const photosByRegion = {}
+  for (const photo of bozorRasmlari) {
+    ;(photosByRegion[photo.regionId] ??= []).push(photo)
+  }
+
+  const firstWord = (s) => s.trim().split(/\s+/)[0].toLowerCase()
+  const result = {}
+
+  for (const regionId of Object.keys(photosByRegion)) {
+    const photos = photosByRegion[regionId]
+    const candidates = MARKETS.filter((m) => String(m.regionId) === String(regionId))
+    if (candidates.length === 0) continue
+
+    if (photos.length === 1 && candidates.length === 1) {
+      result[candidates[0].id] = photos[0].rasmUrl
+      continue
+    }
+
+    for (const market of candidates) {
+      const match = photos.find((p) => firstWord(p.bozorNomi) === firstWord(market.name.uz))
+      if (match) result[market.id] = match.rasmUrl
+    }
+  }
+
+  return result
+}
+
 export const MARKETS = [
   {
     id: 'chorsu-tashkent',

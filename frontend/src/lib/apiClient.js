@@ -1,4 +1,11 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:4000/api'
+// Static assets (e.g. /static/bozorlar/...) are served at the server root, not under /api.
+const SERVER_ROOT_URL = BASE_URL.replace(/\/api\/?$/, '')
+
+/** Resolves a server-relative static path (e.g. a `rasmUrl` field) to an absolute URL. */
+export function getStaticUrl(path) {
+  return `${SERVER_ROOT_URL}${path}`
+}
 
 export class ApiError extends Error {
   constructor(message, { status, payload } = {}) {

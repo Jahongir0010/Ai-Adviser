@@ -4,8 +4,8 @@ import GlassCard from '../ui/GlassCard.jsx'
 import AIAnalysisPanel from './AIAnalysisPanel.jsx'
 import AIRecommendationPanel from './AIRecommendationPanel.jsx'
 import MarketMiniMap from './MarketMiniMap.jsx'
-import BannerPattern from './BannerPattern.jsx'
-import { MARKET_TYPE_ICONS, MARKET_TYPE_GRADIENT, PRODUCT_ICONS, FACILITY_ICONS } from './marketIcons.js'
+import MarketBanner from './MarketBanner.jsx'
+import { MARKET_TYPE_ICONS, PRODUCT_ICONS, FACILITY_ICONS } from './marketIcons.js'
 import { getRegionName } from '../../data/markets.js'
 import { PRODUCT_NAMES, MARKET_TYPE_NAMES, COVERAGE_NAMES, trMap } from '../../i18n/dictionaries.js'
 import { useLocale, tr } from '../../i18n/LocaleContext.jsx'
@@ -22,11 +22,10 @@ function InfoField({ icon: Icon, label, value }) {
   )
 }
 
-export default function MarketDetailModal({ market, onClose, onGenerateIdea, onViewReport, onCompare }) {
+export default function MarketDetailModal({ market, photoUrl, onClose, onGenerateIdea, onViewReport, onCompare }) {
   const { locale, t } = useLocale()
   if (!market) return null
   const TypeIcon = MARKET_TYPE_ICONS[market.marketType] ?? MARKET_TYPE_ICONS.Universal
-  const gradient = MARKET_TYPE_GRADIENT[market.marketType] ?? MARKET_TYPE_GRADIENT.Universal
 
   const facilityKeys = Object.keys(FACILITY_ICONS)
 
@@ -49,17 +48,16 @@ export default function MarketDetailModal({ market, onClose, onGenerateIdea, onV
           className="w-full max-w-3xl my-auto"
         >
           <GlassCard className="p-0 overflow-hidden max-h-[92vh] flex flex-col">
-            <div className={`relative h-40 shrink-0 flex items-end p-5 bg-gradient-to-br ${gradient}`}>
-              <BannerPattern />
+            <MarketBanner market={market} photoUrl={photoUrl} className="h-40 shrink-0 flex items-end p-5">
               <button
                 onClick={onClose}
                 className="absolute z-10 top-3 right-3 size-9 rounded-[10px] bg-black/20 text-white flex items-center justify-center hover:bg-black/30 transition-colors"
               >
                 <X className="size-4" strokeWidth={2} />
               </button>
-              <TypeIcon className="absolute z-10 top-5 left-5 size-8 text-white/70" strokeWidth={1.5} />
+              {!photoUrl && <TypeIcon className="absolute z-10 top-5 left-5 size-8 text-white/70" strokeWidth={1.5} />}
               <h2 className="relative z-10 font-display font-bold text-[22px] text-white leading-snug">{tr(market.name, locale)}</h2>
-            </div>
+            </MarketBanner>
 
             <div className="p-5 md:p-6 overflow-y-auto space-y-5">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
