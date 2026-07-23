@@ -49,4 +49,10 @@ router.post(
   aiController.ideas
 );
 
+router.post(
+  '/ai/biznes-goya',
+  validateBody({ answers: { required: true, type: 'object' } }),
+  aiController.biznesGoya
+);
+
 module.exports = router;

@@ -113,6 +113,37 @@ noted in *italics* for context only; they are not this log's responsibility.
   six `/api/ai/*` endpoints verified working end-to-end with a real key
   (chat history round-trip included).
 
+## 2026-07-23 (continued)
+
+- **Real-data-grounded business idea generation - `POST /api/ai/biznes-goya`.**
+  This is what turns the generic Gemini integration into the actual product
+  feature. Body is `{ answers }` (same shape as `POST /api/anketa/javoblar`).
+  Flow: validate the anketa answers (reuses `anketa.service.js`) -> look up
+  the chosen mahalla's real statistics via a new
+  `src/services/tahlil.service.js` (population, business density,
+  unemployment, poverty tier, dominant specializations, credit/NPL ratio,
+  infrastructure, and the district's available credit programs - all
+  computed directly from `backend/data`, no AI involved in this part) ->
+  feed both the user's answers and this real profile into a Gemini prompt
+  requesting structured JSON matching the frontend's existing
+  `GENERATED_IDEAS` shape (`name, matchScore, investment, monthlyProfit, roi,
+  payback, marketDemand, competitionLevel, riskScore, growthPotential,
+  govSupportEligible, summary`). Verified end-to-end: ideas correctly cite
+  the mahalla by name and its actual specialization percentages, and match
+  the user's stated collateral/credit-product answers - not generic advice.
+- Also added `GET /api/mahallas/:id/tahlil` exposing the same real-statistics
+  computation directly, for the dashboard to use instead of mock numbers.
+  Note: this only covers the *objective* metrics that are directly computable
+  from real data (population, density ratios, credit/NPL, specializations).
+  The frontend's mock dashboard also has "judgment" metrics like
+  `aiOpportunityScore` / `trend` that aren't raw data - producing those well
+  (without an expensive live AI call per mahalla per page view) is still
+  open; likely needs periodic pre-computation/caching rather than per-request
+  generation.
+- `errorHandler.js` now forwards `err.details` as an `errors` array in the
+  response when present (used by the anketa-validation-failure path above),
+  without changing the shape for errors that don't set it.
+
 ## Open items / known gaps
 
 - No mahalla-level location data (point or polygon) - blocks full zoom-to-
@@ -120,6 +151,7 @@ noted in *italics* for context only; they are not this log's responsibility.
 - Auth, user-attached anketa history, and PDF export are all designed-for
   but not yet built (see product flow in memory). These will need their own
   Postgres tables/migrations.
-- Gemini is integrated as generic AI utility endpoints; nothing yet combines
-  anketa answers + geo data + Gemini into the actual "business idea"
-  generation feature described in the product flow.
+- Dashboard "judgment" metrics (aiOpportunityScore, trend, growthPotential
+  type scores across many mahallas) still need a caching/pre-computation
+  strategy - not solved yet, only the per-mahalla real-stats + on-demand
+  AI-idea-generation paths are.

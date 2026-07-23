@@ -1,4 +1,5 @@
 const aiService = require('../services/ai.service');
+const biznesGoyaService = require('../services/biznesGoya.service');
 
 async function chat(req, res, next) {
   try {
@@ -60,6 +61,16 @@ async function ideas(req, res, next) {
   }
 }
 
+async function biznesGoya(req, res, next) {
+  try {
+    const { answers } = req.body;
+    const result = await biznesGoyaService.generate({ answers });
+    res.json({ success: true, data: result });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   chat,
   generate,
@@ -67,4 +78,5 @@ module.exports = {
   title,
   improve,
   ideas,
+  biznesGoya,
 };

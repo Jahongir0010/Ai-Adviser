@@ -1,4 +1,5 @@
 const geoService = require('../services/geo.service');
+const tahlilService = require('../services/tahlil.service');
 
 function listMahallalar(req, res) {
   const { regionId, districtId, status, category, search, page, limit } = req.query;
@@ -26,8 +27,17 @@ function getMahallaChegara(req, res) {
   res.json({ success: true, data: boundary });
 }
 
+function getMahallaTahlil(req, res) {
+  const tahlil = tahlilService.mahallaTahlili(req.params.id);
+  if (!tahlil) {
+    return res.status(404).json({ success: false, message: 'Mahalla topilmadi' });
+  }
+  res.json({ success: true, data: tahlil });
+}
+
 module.exports = {
   listMahallalar,
   getMahalla,
   getMahallaChegara,
+  getMahallaTahlil,
 };

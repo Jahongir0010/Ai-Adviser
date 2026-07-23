@@ -26,6 +26,11 @@ function validateBody(rules) {
         continue;
       }
 
+      if (rule.type === 'object' && (typeof value !== 'object' || Array.isArray(value))) {
+        errors.push(`"${field}" obyekt (object) bo'lishi kerak`);
+        continue;
+      }
+
       if (rule.type === 'number') {
         const num = Number(value);
         if (Number.isNaN(num)) {
