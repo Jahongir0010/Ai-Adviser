@@ -1,10 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const anketaRepository = require('../repositories/anketa.repository');
 const geoService = require('./geo.service');
-
-const QUESTIONS_PATH = path.join(__dirname, '..', '..', 'data', 'anketa-savollari.json');
-
-const questions = JSON.parse(fs.readFileSync(QUESTIONS_PATH, 'utf-8'));
 
 function resolveOptions(question, answersSoFar) {
   if (question.options) {
@@ -39,7 +34,9 @@ function isRequired(question, data) {
   return !!question.required;
 }
 
-function getQuestions() {
+async function getQuestions() {
+  const questions = await anketaRepository.findAllQuestions();
+
   return questions.map((q) => ({
     key: q.key,
     label: q.label,
@@ -51,11 +48,12 @@ function getQuestions() {
   }));
 }
 
-function validateAnswers(answers = {}) {
+async function validateAnswers(answers = {}) {
+  const questions = await anketaRepository.findAllQuestions();
   const errors = [];
   const data = {};
 
-  // Relies on anketa-savollari.json listing a question after the ones it dependsOn.
+  // Relies on anketa_savollari.sort_order listing a question after the ones it dependsOn.
   for (const question of questions) {
     const raw = answers[question.key];
     const isEmpty = raw === undefined || raw === null || raw === '';
