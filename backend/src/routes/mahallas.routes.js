@@ -9,5 +9,6 @@ router.get('/mahallalar/:id', mahallasController.getMahalla);
 
 // REST-style single-resource path, matching the nested /regions/:id/districts, /districts/:id/mahallas convention.
 router.get('/mahallas/:id', mahallasController.getMahalla);
+router.get('/mahallas/:id/chegara', mahallasController.getMahallaChegara);
 
 module.exports = router;

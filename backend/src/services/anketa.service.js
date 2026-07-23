@@ -5,7 +5,6 @@ const geoService = require('./geo.service');
 const QUESTIONS_PATH = path.join(__dirname, '..', '..', 'data', 'anketa-savollari.json');
 
 const questions = JSON.parse(fs.readFileSync(QUESTIONS_PATH, 'utf-8'));
-const questionByKey = new Map(questions.map((q) => [q.key, q]));
 
 function resolveOptions(question, answersSoFar) {
   if (question.options) {
