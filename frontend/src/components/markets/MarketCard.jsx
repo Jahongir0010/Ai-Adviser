@@ -2,10 +2,11 @@ import { motion } from 'framer-motion'
 import { MapPin, Bookmark, FileText, Sparkles, BadgeCheck, Scale, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import GlassCard from '../ui/GlassCard.jsx'
 import Button from '../ui/Button.jsx'
-import { MARKET_TYPE_ICONS, PRODUCT_ICONS } from './marketIcons.js'
+import { MARKET_TYPE_ICONS, MARKET_TYPE_GRADIENT } from './marketIcons.js'
 import { getRegionName } from '../../data/markets.js'
-import { PRODUCT_NAMES, MARKET_TYPE_NAMES, COVERAGE_NAMES, trMap } from '../../i18n/dictionaries.js'
+import { MARKET_TYPE_NAMES, COVERAGE_NAMES, trMap } from '../../i18n/dictionaries.js'
 import { useLocale, tr } from '../../i18n/LocaleContext.jsx'
+import BannerPattern from './BannerPattern.jsx'
 
 const TREND_ICON = { up: TrendingUp, down: TrendingDown, flat: Minus }
 const TREND_TONE = { up: 'text-secondary-700 bg-secondary-50', down: 'text-rose-700 bg-rose-50', flat: 'text-ink-500 bg-ink-100' }
@@ -13,20 +14,24 @@ const TREND_TONE = { up: 'text-secondary-700 bg-secondary-50', down: 'text-rose-
 export default function MarketCard({ market, isSaved, isCompareSelected, onToggleSave, onToggleCompare, onViewDetails, onAiAnalysis }) {
   const { locale, t } = useLocale()
   const TypeIcon = MARKET_TYPE_ICONS[market.marketType] ?? MARKET_TYPE_ICONS.Universal
+  const gradient = MARKET_TYPE_GRADIENT[market.marketType] ?? MARKET_TYPE_GRADIENT.Universal
   const TrendIcon = TREND_ICON[market.trend]
 
   return (
     <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2, ease: 'easeOut' }} className="h-full">
       <GlassCard className="p-0 flex flex-col h-full overflow-hidden hover:shadow-soft-lg transition-shadow">
-        <div className="relative h-32 shrink-0 flex items-center justify-center bg-gradient-to-br from-primary-600 to-secondary-500">
-          <TypeIcon className="size-10 text-white/90" strokeWidth={1.5} />
-          <span className={`absolute top-2.5 right-2.5 inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${TREND_TONE[market.trend]}`}>
+        <div className={`relative h-32 shrink-0 flex items-center justify-center bg-gradient-to-br ${gradient}`}>
+          <BannerPattern />
+          <span className="size-14 rounded-2xl bg-white/15 flex items-center justify-center">
+            <TypeIcon className="size-7 text-white" strokeWidth={1.5} />
+          </span>
+          <span className={`absolute z-10 top-2.5 right-2.5 inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${TREND_TONE[market.trend]}`}>
             <TrendIcon className="size-3" strokeWidth={2.5} />
           </span>
           <button
             onClick={() => onToggleSave(market.id)}
             title={t('markets.card.save')}
-            className={`absolute top-2.5 left-2.5 size-8 rounded-[10px] flex items-center justify-center backdrop-blur transition-colors ${
+            className={`absolute z-10 top-2.5 left-2.5 size-8 rounded-[10px] flex items-center justify-center backdrop-blur transition-colors ${
               isSaved ? 'bg-white text-secondary-600' : 'bg-black/20 text-white hover:bg-black/30'
             }`}
           >
@@ -53,18 +58,6 @@ export default function MarketCard({ market, isSaved, isCompareSelected, onToggl
                 <BadgeCheck className="size-3" strokeWidth={2} /> {t('markets.card.govSupport')}
               </span>
             )}
-          </div>
-
-          <div className="flex flex-wrap gap-1.5 mt-3">
-            {market.products.map((p) => {
-              const Icon = PRODUCT_ICONS[p]
-              return (
-                <span key={p} className="inline-flex items-center gap-1 text-[11.5px] font-medium text-ink-600 bg-ink-50 rounded-full px-2 py-1">
-                  {Icon && <Icon className="size-3.5 text-primary-600" strokeWidth={2} />}
-                  {trMap(PRODUCT_NAMES, p, locale)}
-                </span>
-              )
-            })}
           </div>
 
           <p className="text-[12.5px] text-ink-500 leading-snug mt-3 line-clamp-2">{tr(market.summary, locale)}</p>

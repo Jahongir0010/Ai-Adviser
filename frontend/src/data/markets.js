@@ -34,9 +34,16 @@ export function getRegionName(regionId, locale) {
   return entry[locale] ?? entry.en
 }
 
+/** Opens Google Maps turn-by-turn directions to the market's coordinates. */
+export function getGoogleMapsDirectionsUrl(market) {
+  const { lat, lng } = market.coordinates
+  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
+}
+
 export const MARKETS = [
   {
     id: 'chorsu-tashkent',
+    coordinates: { lat: 41.3264, lng: 69.2401 },
     name: { en: 'Chorsu Bazaar', uz: 'Chorsu bozori', ru: 'Базар Чорсу' },
     regionId: 10,
     address: { en: 'Chorsu Street 1, Tashkent', uz: 'Chorsu ko‘chasi 1, Toshkent', ru: 'ул. Чорсу 1, Ташкент' },
@@ -62,6 +69,7 @@ export const MARKETS = [
   },
   {
     id: 'oloy-tashkent',
+    coordinates: { lat: 41.3111, lng: 69.2797 },
     name: { en: 'Oloy Bazaar', uz: 'Oloy bozori', ru: 'Базар Олой' },
     regionId: 10,
     address: { en: 'Oybek Street, Tashkent', uz: 'Oybek ko‘chasi, Toshkent', ru: 'ул. Айбек, Ташкент' },
@@ -87,6 +95,7 @@ export const MARKETS = [
   },
   {
     id: 'siyob-samarqand',
+    coordinates: { lat: 39.6547, lng: 66.9762 },
     name: { en: 'Siyob Bazaar', uz: 'Siyob bozori', ru: 'Базар Сиёб' },
     regionId: 6,
     address: { en: 'Registon Street, Samarkand', uz: 'Registon ko‘chasi, Samarqand', ru: 'ул. Регистан, Самарканд' },
@@ -112,6 +121,7 @@ export const MARKETS = [
   },
   {
     id: 'fargona-markaziy',
+    coordinates: { lat: 40.3894, lng: 71.7844 },
     name: { en: 'Fergana Central Bazaar', uz: "Farg'ona Markaziy bozori", ru: 'Центральный базар Ферганы' },
     regionId: 11,
     address: { en: 'Al-Farg’oniy Street, Fergana', uz: "Al-Farg'oniy ko'chasi, Farg'ona", ru: 'ул. Аль-Фаргани, Фергана' },
@@ -137,6 +147,7 @@ export const MARKETS = [
   },
   {
     id: 'buxoro-markaziy',
+    coordinates: { lat: 39.7747, lng: 64.4286 },
     name: { en: 'Bukhara Central Bazaar', uz: 'Buxoro Markaziy bozori', ru: 'Центральный базар Бухары' },
     regionId: 2,
     address: { en: 'Bahovuddin Naqshband Street, Bukhara', uz: "Bahovuddin Naqshband ko'chasi, Buxoro", ru: 'ул. Баховуддин Накшбанд, Бухара' },
@@ -162,6 +173,7 @@ export const MARKETS = [
   },
   {
     id: 'jahon-andijon',
+    coordinates: { lat: 40.7821, lng: 72.3442 },
     name: { en: 'Jahon Bazaar', uz: 'Jahon bozori', ru: 'Базар Джахон' },
     regionId: 1,
     address: { en: 'Bobur Shox Street, Andijan', uz: 'Bobur Shoh ko‘chasi, Andijon', ru: 'ул. Бабур Шах, Андижан' },
@@ -187,6 +199,7 @@ export const MARKETS = [
   },
   {
     id: 'namangan-markaziy',
+    coordinates: { lat: 40.9983, lng: 71.6726 },
     name: { en: 'Namangan Central Bazaar', uz: 'Namangan Markaziy bozori', ru: 'Центральный базар Намангана' },
     regionId: 5,
     address: { en: 'Uychi Street, Namangan', uz: "Uychi ko'chasi, Namangan", ru: 'ул. Уйчи, Наманган' },
@@ -212,6 +225,7 @@ export const MARKETS = [
   },
   {
     id: 'urganch-markaziy',
+    coordinates: { lat: 41.5506, lng: 60.6317 },
     name: { en: 'Urgench Central Bazaar', uz: 'Urganch Markaziy bozori', ru: 'Центральный базар Ургенча' },
     regionId: 12,
     address: { en: 'Al-Xorazmiy Street, Urgench', uz: "Al-Xorazmiy ko'chasi, Urganch", ru: 'ул. Аль-Хорезми, Ургенч' },
@@ -237,6 +251,7 @@ export const MARKETS = [
   },
   {
     id: 'qarshi-bozori',
+    coordinates: { lat: 38.8606, lng: 65.7891 },
     name: { en: 'Qarshi Bazaar', uz: 'Qarshi bozori', ru: 'Базар Карши' },
     regionId: 13,
     address: { en: 'Mustaqillik Street, Qarshi', uz: "Mustaqillik ko'chasi, Qarshi", ru: 'ул. Мустакиллик, Карши' },
@@ -262,6 +277,7 @@ export const MARKETS = [
   },
   {
     id: 'termiz-bozori',
+    coordinates: { lat: 37.2242, lng: 67.2783 },
     name: { en: 'Termez Bazaar', uz: 'Termiz bozori', ru: 'Базар Термез' },
     regionId: 8,
     address: { en: 'Alpomish Street, Termez', uz: "Alpomish ko'chasi, Termiz", ru: 'ул. Алпомиш, Термез' },
@@ -287,6 +303,7 @@ export const MARKETS = [
   },
   {
     id: 'jizzax-markaziy',
+    coordinates: { lat: 40.1158, lng: 67.8422 },
     name: { en: 'Jizzakh Central Bazaar', uz: 'Jizzax Markaziy bozori', ru: 'Центральный базар Джизака' },
     regionId: 3,
     address: { en: 'Sharaf Rashidov Street, Jizzakh', uz: "Sharof Rashidov ko'chasi, Jizzax", ru: 'ул. Шараф Рашидов, Джизак' },
@@ -312,6 +329,7 @@ export const MARKETS = [
   },
   {
     id: 'navoiy-markaziy',
+    coordinates: { lat: 40.0844, lng: 65.3792 },
     name: { en: 'Navoiy Central Bazaar', uz: 'Navoiy Markaziy bozori', ru: 'Центральный базар Навои' },
     regionId: 4,
     address: { en: 'Ibn Sino Street, Navoiy', uz: "Ibn Sino ko'chasi, Navoiy", ru: 'ул. Ибн Сино, Навои' },
@@ -337,6 +355,7 @@ export const MARKETS = [
   },
   {
     id: 'sirdaryo-markaziy',
+    coordinates: { lat: 40.4897, lng: 68.7842 },
     name: { en: 'Gulistan Central Bazaar', uz: 'Guliston Markaziy bozori', ru: 'Центральный базар Гулистана' },
     regionId: 7,
     address: { en: 'Mustaqillik Avenue, Gulistan', uz: "Mustaqillik shoh ko'chasi, Guliston", ru: 'пр. Мустакиллик, Гулистан' },
@@ -362,6 +381,7 @@ export const MARKETS = [
   },
   {
     id: 'nukus-bozori',
+    coordinates: { lat: 42.4531, lng: 59.6103 },
     name: { en: 'Nukus Bazaar', uz: 'Nukus bozori', ru: 'Базар Нукуса' },
     regionId: 14,
     address: { en: 'Dosnazarov Street, Nukus', uz: "Dosnazarov ko'chasi, Nukus", ru: 'ул. Досназаров, Нукус' },
@@ -392,40 +412,6 @@ export function getMarketDensityByRegion() {
   const counts = {}
   for (const m of MARKETS) counts[m.regionId] = (counts[m.regionId] ?? 0) + 1
   return counts
-}
-
-/** @returns {{regionId: number, demand: number, count: number}[]} avg demand score per region, sorted descending. */
-export function getDemandByRegion() {
-  const byRegion = {}
-  for (const m of MARKETS) {
-    if (!byRegion[m.regionId]) byRegion[m.regionId] = { regionId: m.regionId, total: 0, count: 0 }
-    byRegion[m.regionId].total += m.stats.demand
-    byRegion[m.regionId].count += 1
-  }
-  return Object.values(byRegion)
-    .map((r) => ({ regionId: r.regionId, demand: Math.round(r.total / r.count), count: r.count }))
-    .sort((a, b) => b.demand - a.demand)
-}
-
-/** Product -> number of markets carrying it, sorted descending. */
-export function getTopProducts(limit = 8) {
-  const counts = {}
-  for (const m of MARKETS) {
-    for (const p of m.products) counts[p] = (counts[p] ?? 0) + 1
-  }
-  return Object.entries(counts)
-    .map(([product, count]) => ({ product, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, limit)
-}
-
-/** Average avgPriceIndex per market type. */
-export function getPriceByMarketType() {
-  return MARKET_TYPES.map((type) => {
-    const markets = MARKETS.filter((m) => m.marketType === type)
-    const avg = markets.length ? Math.round(markets.reduce((sum, m) => sum + m.avgPriceIndex, 0) / markets.length) : 0
-    return { marketType: type, avgPriceIndex: avg }
-  })
 }
 
 // Illustrative national seasonality curve for fresh-produce bazaar demand (0-100).

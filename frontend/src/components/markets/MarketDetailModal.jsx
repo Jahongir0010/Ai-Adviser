@@ -3,7 +3,9 @@ import { X, MapPin, Clock, LayoutGrid, Layers, MapPinned, Check } from 'lucide-r
 import GlassCard from '../ui/GlassCard.jsx'
 import AIAnalysisPanel from './AIAnalysisPanel.jsx'
 import AIRecommendationPanel from './AIRecommendationPanel.jsx'
-import { MARKET_TYPE_ICONS, PRODUCT_ICONS, FACILITY_ICONS } from './marketIcons.js'
+import MarketMiniMap from './MarketMiniMap.jsx'
+import BannerPattern from './BannerPattern.jsx'
+import { MARKET_TYPE_ICONS, MARKET_TYPE_GRADIENT, PRODUCT_ICONS, FACILITY_ICONS } from './marketIcons.js'
 import { getRegionName } from '../../data/markets.js'
 import { PRODUCT_NAMES, MARKET_TYPE_NAMES, COVERAGE_NAMES, trMap } from '../../i18n/dictionaries.js'
 import { useLocale, tr } from '../../i18n/LocaleContext.jsx'
@@ -24,6 +26,7 @@ export default function MarketDetailModal({ market, onClose, onGenerateIdea, onV
   const { locale, t } = useLocale()
   if (!market) return null
   const TypeIcon = MARKET_TYPE_ICONS[market.marketType] ?? MARKET_TYPE_ICONS.Universal
+  const gradient = MARKET_TYPE_GRADIENT[market.marketType] ?? MARKET_TYPE_GRADIENT.Universal
 
   const facilityKeys = Object.keys(FACILITY_ICONS)
 
@@ -37,6 +40,7 @@ export default function MarketDetailModal({ market, onClose, onGenerateIdea, onV
         onClick={onClose}
       >
         <motion.div
+          key={market.id}
           initial={{ opacity: 0, y: 16, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -45,15 +49,16 @@ export default function MarketDetailModal({ market, onClose, onGenerateIdea, onV
           className="w-full max-w-3xl my-auto"
         >
           <GlassCard className="p-0 overflow-hidden max-h-[92vh] flex flex-col">
-            <div className="relative h-40 shrink-0 flex items-end p-5 bg-gradient-to-br from-primary-600 to-secondary-500">
+            <div className={`relative h-40 shrink-0 flex items-end p-5 bg-gradient-to-br ${gradient}`}>
+              <BannerPattern />
               <button
                 onClick={onClose}
-                className="absolute top-3 right-3 size-9 rounded-[10px] bg-black/20 text-white flex items-center justify-center hover:bg-black/30 transition-colors"
+                className="absolute z-10 top-3 right-3 size-9 rounded-[10px] bg-black/20 text-white flex items-center justify-center hover:bg-black/30 transition-colors"
               >
                 <X className="size-4" strokeWidth={2} />
               </button>
-              <TypeIcon className="absolute top-5 left-5 size-8 text-white/70" strokeWidth={1.5} />
-              <h2 className="font-display font-bold text-[22px] text-white leading-snug">{tr(market.name, locale)}</h2>
+              <TypeIcon className="absolute z-10 top-5 left-5 size-8 text-white/70" strokeWidth={1.5} />
+              <h2 className="relative z-10 font-display font-bold text-[22px] text-white leading-snug">{tr(market.name, locale)}</h2>
             </div>
 
             <div className="p-5 md:p-6 overflow-y-auto space-y-5">
@@ -65,10 +70,7 @@ export default function MarketDetailModal({ market, onClose, onGenerateIdea, onV
                 <InfoField icon={Clock} label={t('markets.detail.workingHours')} value={market.workingHours} />
               </div>
 
-              <div className="rounded-[14px] border border-ink-100 bg-ink-50 h-[140px] flex flex-col items-center justify-center gap-1.5 text-ink-400">
-                <MapPinned className="size-6" strokeWidth={1.5} />
-                <span className="text-[12px]">{t('markets.detail.mapPlaceholder')}</span>
-              </div>
+              <MarketMiniMap market={market} />
 
               <div>
                 <p className="text-[11.5px] font-semibold text-ink-500 uppercase tracking-wider mb-2">{t('markets.detail.mainProducts')}</p>

@@ -20,6 +20,15 @@ export const MARKET_TYPE_ICONS = {
   "Farmers' market": Sprout,
 }
 
+// Distinct two-tone banner gradient per market type (a fixed, meaningful
+// mapping - not random per-card) used in place of real market photography.
+export const MARKET_TYPE_GRADIENT = {
+  Universal: 'from-primary-600 to-secondary-500',
+  Wholesale: 'from-primary-800 to-primary-400',
+  Retail: 'from-secondary-700 to-secondary-300',
+  "Farmers' market": 'from-amber-500 to-secondary-600',
+}
+
 export const FACILITY_ICONS = {
   parking: Car,
   coldStorage: Snowflake,

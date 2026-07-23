@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { Store } from 'lucide-react'
-import SectionHeading from '../components/ui/SectionHeading.jsx'
 import GlassCard from '../components/ui/GlassCard.jsx'
 import StatsRow from '../components/markets/StatsRow.jsx'
 import FilterToolbar from '../components/markets/FilterToolbar.jsx'
@@ -9,11 +8,6 @@ import MarketCard from '../components/markets/MarketCard.jsx'
 import MarketDetailModal from '../components/markets/MarketDetailModal.jsx'
 import MarketComparison from '../components/markets/MarketComparison.jsx'
 import AISmartSearch from '../components/markets/AISmartSearch.jsx'
-import DemandByRegionChart from '../components/markets/charts/DemandByRegionChart.jsx'
-import TopProductsChart from '../components/markets/charts/TopProductsChart.jsx'
-import PriceComparisonChart from '../components/markets/charts/PriceComparisonChart.jsx'
-import MarketDensityChart from '../components/markets/charts/MarketDensityChart.jsx'
-import SeasonalityChart from '../components/markets/charts/SeasonalityChart.jsx'
 import { MARKETS, REGION_NAMES_BY_ID, getRegionName } from '../data/markets.js'
 import { PRODUCT_NAMES } from '../i18n/dictionaries.js'
 import { useLocale } from '../i18n/LocaleContext.jsx'
@@ -151,17 +145,6 @@ export default function MarketReports() {
       )}
 
       <AISmartSearch />
-
-      <section>
-        <SectionHeading eyebrow={t('markets.eyebrow')} title={t('markets.charts.sectionTitle')} description={t('markets.charts.sectionDescription')} />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          <DemandByRegionChart />
-          <TopProductsChart />
-          <PriceComparisonChart />
-          <MarketDensityChart />
-          <SeasonalityChart className="lg:col-span-2" />
-        </div>
-      </section>
 
       <MarketDetailModal
         market={activeMarket}
