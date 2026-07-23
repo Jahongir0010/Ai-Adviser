@@ -71,6 +71,10 @@ function getDistrictBoundariesByRegionId(regionId) {
   return geoRepository.findDistrictBoundariesByRegionId(regionId);
 }
 
+function getMahallaBoundary(mahallaId) {
+  return geoRepository.findMahallaBoundary(mahallaId);
+}
+
 module.exports = {
   getRegions,
   getRegionById,
@@ -86,4 +90,5 @@ module.exports = {
   getAllRegionBoundaries,
   getDistrictBoundary,
   getDistrictBoundariesByRegionId,
+  getMahallaBoundary,
 };

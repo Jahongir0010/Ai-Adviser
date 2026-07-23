@@ -122,6 +122,13 @@ function findDistrictBoundariesByRegionId(regionId) {
   };
 }
 
+// No mahalla-level geometry source exists yet (the "7. Харита" GIS export only
+// had region and district layers). Always returns null until a real source
+// (polygon or at least a centroid per mahalla) is imported into backend/data.
+function findMahallaBoundary() {
+  return null;
+}
+
 module.exports = {
   findAllRegions,
   findRegionById,
@@ -136,4 +143,5 @@ module.exports = {
   findAllRegionBoundaries,
   findDistrictBoundary,
   findDistrictBoundariesByRegionId,
+  findMahallaBoundary,
 };

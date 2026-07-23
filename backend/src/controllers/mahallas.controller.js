@@ -14,7 +14,20 @@ function getMahalla(req, res) {
   res.json({ success: true, data: mahalla });
 }
 
+function getMahallaChegara(req, res) {
+  const mahalla = geoService.getMahallaById(req.params.id);
+  if (!mahalla) {
+    return res.status(404).json({ success: false, message: 'Mahalla topilmadi' });
+  }
+  const boundary = geoService.getMahallaBoundary(req.params.id);
+  if (!boundary) {
+    return res.status(404).json({ success: false, message: 'Bu mahalla uchun xarita chegarasi topilmadi' });
+  }
+  res.json({ success: true, data: boundary });
+}
+
 module.exports = {
   listMahallalar,
   getMahalla,
+  getMahallaChegara,
 };
