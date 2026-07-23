@@ -2,10 +2,10 @@ const { Pool } = require('pg');
 
 let pool = null;
 
-// Not called anywhere yet - the app currently runs entirely on the static JSON
-// data in backend/data via src/repositories. Once DATABASE_URL is configured
-// (Postgres or Supabase), repositories can call getPool() to run real queries
-// instead of reading JSON files, without any change needed in services/controllers.
+// Repositories still read backend/data JSON directly - nothing has been migrated
+// to Postgres yet. getPool() is only used by the /api/health check for now, to
+// prove the connection works; once a feature needs real tables, its repository
+// can call getPool() to run queries without any change needed in services/controllers.
 function getPool() {
   if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL is not set - database is not configured yet');
