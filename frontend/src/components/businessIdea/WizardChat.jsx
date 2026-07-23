@@ -1,10 +1,19 @@
-import { useState } from 'react'
-import { Sparkles, Bot, User, Check, ArrowRight } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { Sparkles, Bot, User, ArrowRight, AlertTriangle } from 'lucide-react'
 import GlassCard from '../ui/GlassCard.jsx'
 import Button from '../ui/Button.jsx'
 import WizardProgress from './WizardProgress.jsx'
-import { WIZARD_QUESTIONS } from '../../data/wizard.js'
-import { useLocale, tr } from '../../i18n/LocaleContext.jsx'
+import { getSavollar } from '../../data/anketaApi.js'
+import { getRegionDistricts, getDistrictMahallas } from '../../features/map/api/geoApi.js'
+import { useLocale } from '../../i18n/LocaleContext.jsx'
+
+// hudud (regions) options come back resolved on GET /anketa/savollar already;
+// tuman/mahalla are cascading selects the backend leaves for the client to
+// resolve once the question they dependsOn has an answer.
+const DYNAMIC_OPTION_LOADERS = {
+  tuman: (regionId) => getRegionDistricts(regionId).then((list) => list.map((d) => ({ value: d.id, label: d.name }))),
+  mahalla: (districtId) => getDistrictMahallas(districtId).then((list) => list.map((m) => ({ value: m.id, label: m.name }))),
+}
 
 function ChatBubble({ from, text, subtext }) {
   if (!text) return null
@@ -30,35 +39,129 @@ function ChatBubble({ from, text, subtext }) {
   )
 }
 
+function isVisible(question, answers) {
+  if (!question.requiredIf) return true
+  return answers[question.requiredIf.key] === question.requiredIf.equals
+}
+
 export default function WizardChat({ onComplete }) {
-  const { locale, t } = useLocale()
+  const { t } = useLocale()
+  const [loadState, setLoadState] = useState({ status: 'loading', questions: [], error: null })
   const [stepIndex, setStepIndex] = useState(0)
   const [answers, setAnswers] = useState({})
-  const [multiSelection, setMultiSelection] = useState([])
+  const [dynamicOptions, setDynamicOptions] = useState({})
+  const [optionsLoading, setOptionsLoading] = useState(false)
+  const [inputValue, setInputValue] = useState('')
 
-  const question = WIZARD_QUESTIONS[stepIndex]
-  const history = WIZARD_QUESTIONS.slice(0, stepIndex)
+  const [retryToken, setRetryToken] = useState(0)
+
+  useEffect(() => {
+    let cancelled = false
+    setLoadState({ status: 'loading', questions: [], error: null })
+    getSavollar()
+      .then((questions) => {
+        if (!cancelled) setLoadState({ status: 'ready', questions, error: null })
+      })
+      .catch((error) => {
+        if (!cancelled) setLoadState({ status: 'error', questions: [], error })
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [retryToken])
+
+  const questions = loadState.questions
+  const visibleQuestions = useMemo(() => questions.filter((q) => isVisible(q, answers)), [questions, answers])
+  const question = visibleQuestions[stepIndex]
+  const history = visibleQuestions.slice(0, stepIndex)
+
+  useEffect(() => {
+    setInputValue('')
+  }, [stepIndex])
+
+  useEffect(() => {
+    if (!question || question.options || !DYNAMIC_OPTION_LOADERS[question.key]) return
+    const dependsOnValue = answers[question.dependsOn]
+    if (dependsOnValue == null) return
+    let cancelled = false
+    setOptionsLoading(true)
+    DYNAMIC_OPTION_LOADERS[question.key](dependsOnValue)
+      .then((opts) => {
+        if (!cancelled) setDynamicOptions((prev) => ({ ...prev, [question.key]: opts }))
+      })
+      .catch(() => {
+        if (!cancelled) setDynamicOptions((prev) => ({ ...prev, [question.key]: [] }))
+      })
+      .finally(() => {
+        if (!cancelled) setOptionsLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question?.key, answers[question?.dependsOn]])
+
+  function optionsFor(q) {
+    return q.options ?? dynamicOptions[q.key] ?? []
+  }
 
   function advance(value) {
-    const updated = { ...answers, [question.id]: value }
+    const updated = { ...answers, [question.key]: value }
+    const nextVisible = questions.filter((q) => isVisible(q, updated))
     setAnswers(updated)
-    setMultiSelection([])
-    if (stepIndex + 1 >= WIZARD_QUESTIONS.length) {
+    if (stepIndex + 1 >= nextVisible.length) {
       onComplete(updated)
     } else {
       setStepIndex(stepIndex + 1)
     }
   }
 
-  function toggleMulti(opt) {
-    setMultiSelection((prev) => (prev.includes(opt) ? prev.filter((o) => o !== opt) : [...prev, opt]))
+  function answerText(q) {
+    const value = answers[q.key]
+    if (value == null) return null
+    if (q.type === 'select') {
+      const match = optionsFor(q).find((o) => String(o.value) === String(value))
+      return match ? match.label : String(value)
+    }
+    return String(value)
   }
 
-  function answerText(q) {
-    const value = answers[q.id]
-    if (value == null) return null
-    return Array.isArray(value) ? value.map((o) => tr(o, locale)).join(', ') : tr(value, locale)
+  function submitInput() {
+    const trimmed = inputValue.trim()
+    if (!trimmed) return
+    if (question.type === 'number') {
+      const num = Number(trimmed)
+      if (Number.isNaN(num) || (question.min !== undefined && num < question.min)) return
+      advance(num)
+    } else {
+      advance(trimmed)
+    }
   }
+
+  if (loadState.status === 'loading') {
+    return (
+      <GlassCard className="p-5 md:p-7 max-w-2xl mx-auto w-full flex items-center gap-2.5 text-[13.5px] text-ink-500">
+        <Sparkles className="size-4 text-primary-600 animate-pulse" strokeWidth={2} />
+        {t('wizard.loadingQuestions')}
+      </GlassCard>
+    )
+  }
+
+  if (loadState.status === 'error') {
+    return (
+      <GlassCard className="p-5 md:p-7 max-w-2xl mx-auto w-full">
+        <div className="flex items-start gap-2.5 text-[13.5px] text-rose-700">
+          <AlertTriangle className="size-4 shrink-0 mt-0.5" strokeWidth={2} />
+          <span>{loadState.error?.message || t('wizard.loadError')}</span>
+        </div>
+        <Button size="sm" variant="secondary" className="mt-3" onClick={() => setRetryToken((n) => n + 1)}>
+          {t('wizard.retry')}
+        </Button>
+      </GlassCard>
+    )
+  }
+
+  if (!question) return null
 
   return (
     <GlassCard className="p-5 md:p-7 max-w-2xl mx-auto w-full">
@@ -69,46 +172,53 @@ export default function WizardChat({ onComplete }) {
         <div>
           <p className="font-semibold text-[14px] text-ink-900">{t('wizard.advisorName')}</p>
           <p className="text-[12px] text-ink-400">
-            {t('wizard.stepOf').replace('{current}', stepIndex + 1).replace('{total}', WIZARD_QUESTIONS.length)}
+            {t('wizard.stepOf').replace('{current}', stepIndex + 1).replace('{total}', visibleQuestions.length)}
           </p>
         </div>
       </div>
 
-      <WizardProgress step={stepIndex + 1} total={WIZARD_QUESTIONS.length} />
+      <WizardProgress step={stepIndex + 1} total={visibleQuestions.length} />
 
       <div className="mt-6 space-y-4 max-h-[380px] overflow-y-auto pr-1">
         {history.map((q) => (
-          <div key={q.id} className="space-y-2">
-            <ChatBubble from="ai" text={tr(q.question, locale)} />
+          <div key={q.key} className="space-y-2">
+            <ChatBubble from="ai" text={q.label} />
             <ChatBubble from="user" text={answerText(q)} />
           </div>
         ))}
 
-        <div key={question.id} className="animate-fade-up">
-          <ChatBubble from="ai" text={tr(question.question, locale)} subtext={tr(question.subtext, locale)} />
-          <div className="mt-3 ml-11 flex flex-wrap gap-2">
-            {question.options.map((opt) => {
-              const isMulti = question.type === 'multi'
-              const isSelected = isMulti && multiSelection.includes(opt)
-              return (
+        <div key={question.key} className="animate-fade-up">
+          <ChatBubble from="ai" text={question.label} />
+
+          {question.type === 'select' && (
+            <div className="mt-3 ml-11 flex flex-wrap gap-2">
+              {optionsLoading && optionsFor(question).length === 0 && (
+                <span className="text-[12.5px] text-ink-400">{t('wizard.optionsLoading')}</span>
+              )}
+              {optionsFor(question).map((opt) => (
                 <button
-                  key={opt.en}
-                  onClick={() => (isMulti ? toggleMulti(opt) : advance(opt))}
-                  className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13.5px] font-medium transition-all ${
-                    isSelected
-                      ? 'bg-primary-600 border-primary-600 text-white'
-                      : 'border-ink-200 text-ink-700 hover:border-primary-300 hover:bg-primary-50'
-                  }`}
+                  key={opt.value}
+                  onClick={() => advance(opt.value)}
+                  className="flex items-center gap-1.5 rounded-full border border-ink-200 text-ink-700 px-3.5 py-2 text-[13.5px] font-medium transition-all hover:border-primary-300 hover:bg-primary-50"
                 >
-                  {isSelected && <Check className="size-3.5" strokeWidth={2.5} />}
-                  {tr(opt, locale)}
+                  {opt.label}
                 </button>
-              )
-            })}
-          </div>
-          {question.type === 'multi' && (
-            <div className="ml-11 mt-3">
-              <Button size="sm" disabled={multiSelection.length === 0} onClick={() => advance(multiSelection)}>
+              ))}
+            </div>
+          )}
+
+          {(question.type === 'text' || question.type === 'number') && (
+            <div className="mt-3 ml-11 flex items-center gap-2">
+              <input
+                type={question.type === 'number' ? 'number' : 'text'}
+                min={question.min}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && submitInput()}
+                placeholder={t('wizard.textPlaceholder')}
+                className="flex-1 h-10 rounded-[10px] bg-ink-50 border border-transparent px-3.5 text-[13.5px] text-ink-800 placeholder:text-ink-400 outline-none focus:bg-white focus:border-primary-200 focus:ring-4 focus:ring-primary-50 transition-all"
+              />
+              <Button size="sm" onClick={submitInput} disabled={!inputValue.trim()}>
                 {t('wizard.continue')} <ArrowRight className="size-4" strokeWidth={2.25} />
               </Button>
             </div>

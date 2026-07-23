@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Sparkles, RotateCcw } from 'lucide-react'
+import { Sparkles, RotateCcw, AlertTriangle } from 'lucide-react'
 import WizardChat from '../components/businessIdea/WizardChat.jsx'
 import GeneratingState from '../components/businessIdea/GeneratingState.jsx'
 import IdeaCard from '../components/businessIdea/IdeaCard.jsx'
@@ -8,6 +8,7 @@ import BusinessPlanView from '../components/businessIdea/BusinessPlanView.jsx'
 import SectionHeading from '../components/ui/SectionHeading.jsx'
 import Button from '../components/ui/Button.jsx'
 import { GENERATED_IDEAS, BUSINESS_PLAN } from '../data/ideas.js'
+import { submitJavoblar } from '../data/anketaApi.js'
 import { useLocale } from '../i18n/LocaleContext.jsx'
 
 const STAGES = { WIZARD: 'wizard', GENERATING: 'generating', RESULTS: 'results', PLAN: 'plan' }
@@ -15,6 +16,7 @@ const STAGES = { WIZARD: 'wizard', GENERATING: 'generating', RESULTS: 'results',
 export default function BusinessIdea() {
   const { t } = useLocale()
   const [stage, setStage] = useState(STAGES.WIZARD)
+  const [submitError, setSubmitError] = useState(null)
   const [savedIds, setSavedIds] = useState([])
   const [compareIds, setCompareIds] = useState([])
   const [showCompare, setShowCompare] = useState(false)
@@ -23,9 +25,20 @@ export default function BusinessIdea() {
   const compareIdeas = useMemo(() => GENERATED_IDEAS.filter((i) => compareIds.includes(i.id)), [compareIds])
   const activeIdea = useMemo(() => GENERATED_IDEAS.find((i) => i.id === activeIdeaId), [activeIdeaId])
 
-  function handleWizardComplete() {
+  function handleWizardComplete(answers) {
+    setSubmitError(null)
     setStage(STAGES.GENERATING)
-    setTimeout(() => setStage(STAGES.RESULTS), 3400)
+    // Validates/normalizes the anketa answers server-side. The backend doesn't
+    // generate ideas from them yet (see anketa.service.js) - once it does, this
+    // is where that call replaces the GENERATED_IDEAS/BUSINESS_PLAN mocks. The
+    // minimum-duration timer keeps GeneratingState's 4-step animation from
+    // being cut short by a validation call that resolves almost instantly.
+    Promise.all([submitJavoblar(answers), new Promise((resolve) => setTimeout(resolve, 3400))])
+      .then(() => setStage(STAGES.RESULTS))
+      .catch((error) => {
+        setSubmitError(error.message)
+        setStage(STAGES.WIZARD)
+      })
   }
 
   function toggleSave(id) {
@@ -63,7 +76,17 @@ export default function BusinessIdea() {
         )}
       </div>
 
-      {stage === STAGES.WIZARD && <WizardChat onComplete={handleWizardComplete} />}
+      {stage === STAGES.WIZARD && (
+        <>
+          {submitError && (
+            <div className="max-w-2xl mx-auto w-full flex items-start gap-2.5 rounded-[14px] bg-rose-50 border border-rose-200 px-3.5 py-2.5 text-[13px] text-rose-700">
+              <AlertTriangle className="size-4 shrink-0 mt-0.5" strokeWidth={2} />
+              {submitError}
+            </div>
+          )}
+          <WizardChat key={submitError ? 'retry' : 'initial'} onComplete={handleWizardComplete} />
+        </>
+      )}
 
       {stage === STAGES.GENERATING && <GeneratingState />}
 

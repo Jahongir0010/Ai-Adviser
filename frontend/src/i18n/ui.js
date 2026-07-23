@@ -176,6 +176,15 @@ export const UI = {
   'wizard.advisorName': { en: 'AI Business Advisor', uz: 'SI biznes maslahatchisi', ru: 'ИИ-бизнес-консультант' },
   'wizard.stepOf': { en: 'Guided discovery · step {current} of {total}', uz: 'Bosqichma-bosqich so‘rov · {current}/{total}-qadam', ru: 'Пошаговый опрос · шаг {current} из {total}' },
   'wizard.continue': { en: 'Continue', uz: 'Davom etish', ru: 'Продолжить' },
+  'wizard.loadingQuestions': { en: 'Loading questions…', uz: 'Savollar yuklanmoqda…', ru: 'Загрузка вопросов…' },
+  'wizard.loadError': {
+    en: 'Could not load questions. Check that the backend is running.',
+    uz: 'Savollarni yuklab bo‘lmadi. Backend ishga tushirilganini tekshiring.',
+    ru: 'Не удалось загрузить вопросы. Проверьте, запущен ли сервер.',
+  },
+  'wizard.retry': { en: 'Retry', uz: 'Qayta urinish', ru: 'Повторить' },
+  'wizard.optionsLoading': { en: 'Loading options…', uz: 'Variantlar yuklanmoqda…', ru: 'Загрузка вариантов…' },
+  'wizard.textPlaceholder': { en: 'Type your answer…', uz: 'Javobingizni yozing…', ru: 'Введите ответ…' },
 
   // Generating state
   'generating.title': { en: 'Generating your business ideas', uz: 'Biznes g‘oyalaringiz yaratilmoqda', ru: 'Генерируем ваши бизнес-идеи' },
