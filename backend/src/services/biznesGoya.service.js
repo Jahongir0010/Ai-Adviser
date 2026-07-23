@@ -23,10 +23,10 @@ const IDEA_ITEM_SCHEMA = {
     monthlyProfit: { type: Type.NUMBER, description: "Taxminiy oylik foyda, so'mda (faqat son)" },
     roi: { type: Type.NUMBER, description: 'Taxminiy investitsiya qaytimi, foizda (faqat son, masalan 18)' },
     payback: { ...TRILINGUAL_TEXT, description: "Sarmoyaning qoplanish muddati, masalan '6 oy'/'6 months'/'6 месяцев'" },
-    marketDemand: { ...TRILINGUAL_TEXT, description: "Bozor talabi darajasi: Past/O'rta/Yuqori tarjimasi" },
-    competitionLevel: { ...TRILINGUAL_TEXT, description: "Raqobat darajasi: Past/O'rta/Yuqori tarjimasi" },
+    marketDemand: { type: Type.INTEGER, description: 'Bozor talabi darajasi, 0-100' },
+    competitionLevel: { type: Type.STRING, enum: ['Low', 'Medium', 'High'], description: 'Raqobat darajasi - aynan shu inglizcha qiymatlardan biri, frontend o\'zi tarjima qiladi' },
     riskScore: { type: Type.INTEGER, description: 'Xavf darajasi, 0 (past) - 100 (yuqori)' },
-    growthPotential: { ...TRILINGUAL_TEXT, description: "O'sish salohiyati: Past/O'rta/Yuqori tarjimasi" },
+    growthPotential: { type: Type.INTEGER, description: "O'sish salohiyati, 0-100" },
     govSupportEligible: { type: Type.BOOLEAN, description: 'Davlat kredit dasturlariga mos kelishi' },
     summary: { ...TRILINGUAL_TEXT, description: '2-3 gapli qisqacha tavsif va asoslash' },
   },
@@ -50,9 +50,11 @@ Foydalanuvchining anketa javoblari va uning mahallasi haqidagi HAQIQIY statistik
 shu aniq hududga va shu odamning sharoitiga real mos keladigan 3 ta biznes-g'oya taklif qiling.
 Umumiy, hech kimga tegishli bo'lmagan maslahatlar bermang - berilgan raqamlarga (aholi soni, mavjud
 ixtisoslashuvlar, kredit dasturlari, kambag'allik darajasi) tayaning.
-Har bir matnli maydonni (name, payback, marketDemand, competitionLevel, growthPotential, summary)
-UCHALA tilda ham to'ldiring: en (ingliz), uz (o'zbek), ru (rus) - bittasi ham bo'sh qolmasin,
-har biri o'sha tilda tabiiy va to'g'ri tarjima bo'lsin, so'zma-so'z emas.`;
+Har bir matnli maydonni (name, payback, summary) UCHALA tilda ham to'ldiring: en (ingliz),
+uz (o'zbek), ru (rus) - bittasi ham bo'sh qolmasin, har biri o'sha tilda tabiiy va to'g'ri
+tarjima bo'lsin, so'zma-so'z emas. competitionLevel maydoni esa FAQAT "Low", "Medium" yoki
+"High" (aynan shu inglizcha so'zlardan biri) bo'lishi kerak - tarjima qilmang, buni frontend
+o'zi tarjima qiladi.`;
 
 function buildIdeasPrompt(answers, tahlil) {
   const lines = [

@@ -177,6 +177,23 @@ noted in *italics* for context only; they are not this log's responsibility.
   for `EADDRINUSE` instead of a raw stack trace. Root `README.md` (shared
   file) rewritten with one unified setup+run process for both computers,
   including a "backendga ulanib bo'lmadi" troubleshooting section.
+- **Fixed a real schema mismatch in `/api/ai/biznes-goya`, found by reading
+  the frontend's actual `IdeaCard.jsx` (not just going off a description of
+  it).** `marketDemand` and `growthPotential` are rendered as `{value}/100`
+  directly - they need to be plain integers 0-100, not translated text.
+  `competitionLevel` is passed through `trMap(LEVELS, idea.competitionLevel,
+  locale)` where `LEVELS` only has keys `Low/Medium/High` - it must be one of
+  those exact English strings, translated client-side, not a `{en,uz,ru}`
+  object. All three were wrongly made trilingual objects in the previous
+  entry; fixed and reverified against a real Gemini call. Confirmed this
+  was also why ideas "still show 4 unchanging items" - `BusinessIdea.jsx`
+  hasn't been wired to call this endpoint yet at all (still imports
+  `GENERATED_IDEAS`/`BUSINESS_PLAN` from `frontend/src/data/ideas.js`), so
+  nothing about this endpoint reaches the UI yet regardless of correctness.
+  `investment`/`monthlyProfit`/`roi` are still plain numbers here (so'm/
+  percent) - `IdeaCard.jsx`'s `Stat` renders whatever is passed with no
+  formatting, so once wired up the frontend will want to add locale-aware
+  number/currency formatting rather than expecting a pre-formatted string.
 
 ## Open items / known gaps
 
